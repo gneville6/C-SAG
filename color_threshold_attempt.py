@@ -36,23 +36,18 @@ def open_close_image(binary_matrix, kernel_size):
     dilation = cv2.dilate(erosion,kernel,iterations = 1)
     return erosion
 
-def count_screws(im):
-    reduct = 0.25
-    w = int(im.shape[0] * reduct)
-    h = int(im.shape[1] * reduct)
-    im = cv2.resize(im,(h,w))
-
-    green_outline = threshold_color(im, GREEN_LOWER, GREEN_UPPER)
+def get_bucket_points(green_outline):
+    ''' returns edges of green bucket '''
+    cut_pad = 40 
     im2, contours, hierarchy = cv2.findContours(green_outline, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
-    cv2.drawContours(im, contours, -1, (0,255,0), 3)
+    # cv2.drawContours(im, contours, -1, (0,255,0), 3)
     # preview(im)
-
     area = []
     for i in range(len(contours)):
         area.append(cv2.contourArea(contours[i]))
         
     cont = sorted(contours, key = cv2.contourArea, reverse = True)
-    cv2.drawContours(im, cont[0], -1, (0,255,0), 3)
+    # cv2.drawContours(im, cont[0], -1, (0,255,0), 3)
     # preview(im)
 
     bucket_cont = np.asarray(cont[0])
@@ -62,29 +57,40 @@ def count_screws(im):
     for i in range(len(bucket_cont)):
         x_vals.append(bucket_cont[i][0][0])
         y_vals.append(bucket_cont[i][0][1])
-      
-    cut_pad = 40    
-    x_max = max(x_vals) -cut_pad
+       
+    x_max = max(x_vals) - cut_pad
     x_min = min(x_vals) + cut_pad
     y_max = max(y_vals) - cut_pad
     y_min = min(y_vals) + cut_pad
 
-    ROI = im[y_min:y_max,x_min:x_max]
-    # preview(ROI)
+    return y_min, y_max, x_min, x_max
 
-    #blue_thresh = threshold_blue(ROI)
-    #preview(blue_thresh)
-
+def get_screw_contours(ROI):
+    ''' given bucket region, return screw contours '''
     green_thresh = threshold_color(ROI, GREEN_LOWER, GREEN_UPPER)
-    #preview(green_thresh)
     green_thresh_inverted = cv2.bitwise_not(green_thresh)
     green_thresh_open_close = open_close_image(green_thresh_inverted, 8)
-    #green_thresh_inverted = morphOps(green_thresh_inverted, 5)
 
     res = cv2.bitwise_and(ROI,ROI, mask= green_thresh_open_close)
-    #preview(res)
 
     im2, contours, hierarchy = cv2.findContours(green_thresh_open_close, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+    return res, contours
+
+def count_screws(im):
+    ''' takes images and returns number of screws '''
+    reduct = 0.25
+    w = int(im.shape[0] * reduct)
+    h = int(im.shape[1] * reduct)
+    im = cv2.resize(im,(h,w))
+
+
+    green_outline = threshold_color(im, GREEN_LOWER, GREEN_UPPER)
+    y_min, y_max, x_min, x_max = get_bucket_points(green_outline)
+
+    ROI = im[y_min:y_max,x_min:x_max]
+
+    res, contours = get_screw_contours(ROI)
+
     num_contours = len(contours)
     print(num_contours)
     preview(res)
