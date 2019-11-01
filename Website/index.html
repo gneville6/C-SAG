@@ -1,4 +1,4 @@
-<!DOCTYPE HTML>
+﻿<!DOCTYPE HTML>
 <html>
 	<head>
 	<meta charset="utf-8">
@@ -150,7 +150,7 @@
 										<span class="heading-meta">Goals</span>
 										<h2 class="colorlib-heading">Abstract</h2>
 										<p>
-											Under Construction
+										Multi-agent systems in the real world require collaboration between robotic agents in order to effectively accomplish tasks. However, robotic errors can hamper the performance of a multi-agent system. Our hope is to provide a method that allows robots to cross-check the progress of other agents and plan around these failures to ensure the team's successful completion of a set of tasks. In order to test this system, we propose a simple Pick-and-Place task where a team of robots works to place different size gears into a pegboard in specific locations. We plan to train a convolutional neural net to do the classification of the various gears that the robots will interact with. We also plan to use more classical vision techniques including color filtering, contour localization, homographies, template matching, ransac and sift to locate holes to place parts into. Finally, we plan to use a variant of the framework found in [3] to detect the configuration of the robot in order to determine errors in the robot’s motion. We currently are still implementing some parts of this proposed system and are therefore unable to show results at this time. However, we hope to be able to show that robots can use visual clues to recognize the errors of other agents and effectively replan.
 										</p>
 										<p></p>
 									</div>
@@ -198,7 +198,15 @@
 										<span class="heading-meta">Intro to Our Work</span>
 										<h2 class="colorlib-heading">Introduction</h2>
 										<p>
-											Under Construction
+
+The goal of this project is to enable robots to monitor each other periodically using computer vision to mitigate the errors that may occur. For example, robot A, while working on completing its own set of tasks, can glance over and observe robot B operating in its workspace and determine if everything is going smoothly or if intervention of some type is needed.
+</p>
+<p>
+The experimental setup we have created includes two Fetch Mobile Manipulators. Each will operate in its own space and will have no physical interaction with the other, but will be facing each other such that they can visually observe one another. (Teaser Figure) Both will have knowledge of its own set of tasks and the global set of tasks. The task we have chosen is a Pick-and-Place task where we move screws and gears from one bin to the other. Both robots will be conducting the same task separately and monitor the other robot. 
+</p>
+<p>
+Our approach is unique because existing approaches to monitoring faults in multi-robot systems [4, 5] do not use vision. By utilizing vision, our system is not dependent on outside factors such as the network connection or internal sensors to influence whether the robots will be able to communicate with each other. Therefore teammates are able to take over tasks and complete overall objectives. 
+
 										</p>
 										<p></p>
 									</div>
@@ -222,7 +230,25 @@
 										<span class="heading-meta">How we did it</span>
 										<h2 class="colorlib-heading">Approach</h2>
 										<p>
-											To mitigate against the errors that may occur while the robots perform these tasks, the robots can monitor each other periodically using computer vision. For example, robot A while working on completing its own set of tasks can glance over and observe robot B operating in its workspace. From the computer vision analysis, robot A can determine if robot B has failed a task, entered an error state, or is performing significantly slower than expected. Robot A can then decide how best to help robot B or best complete the total set of tasks. This could involve attempting to alert robot B about the problem and allow it to diagnose itself or attempting to help diagnose robot B with the goal of getting robot B back to fully functional. Another solution would be to take on some of robot B’s tasks.
+
+There are two different high level tasks required to test and implement a solution. The first is implementing the robot tasks while the second is the vision system for error detection. 
+</p>
+<p>
+In order to build out the Pick-and-Place task that we will be testing with, we are bootstrapping the task from the GT-Rail FetchIt challenge codebase. This codebase has a hierarchical task action layout that allows for quicker extensions of robot task. Updating this existing code to perform new tasks and allow the robots to work simultaneously. 
+The existing library is able to pick the commanded part out of the bucket, however, we will need to implement new tasks to place the screws or gears in the appropriate holes in the peg board. To accomplish this goal, we will orient the part in the air and position over the hole. Then have the robot move in the Z direction and release the grip to drop it in the hole.
+</p>
+<p>
+For the vision portion of the project, different approaches were used to identify the different types of errors. Here we will focus on two errors: a robot misplacing a screw into a bin and a robot malfunctioning and stopping.
+</p>
+<p>
+Error 1: Robot misplacing a screw
+In this error, one of the robots misplaces an item in its output bin. To detect this error, the checker robot checks the contents of the output box. For this implementation, we utilized OpenCV functions to find the contour of the box, crop the image to only include the box, apply a mask for the screws, dilate and erode the mask, and finally count the number of screw contours. One major downside of this method is that it has been subject to false positives when we have glare from ambient lighting. We are currently investigating methods to filter the glare such as bright spot color filtering. Additionally, there have been false positives due to objects in the background of the image. We are working on removing the background once the initial contour of the box has been found. 
+Given the shortcomings of the traditional methods, we are also pursuing a parallel strategy of utilizing convolutional neural networks to detect the gears and screws in the box. We have already collected over 20 minutes of varied video data while shaking the box with different number of parts in it. This data will be used to help train the model. The initial plan for the model is to have two convolutional layers with max pooling and a single hidden layer implemented through the Keras library with Tensorflow as the backend. As this develops we will likely make adjustments to the model and do hyperparameter tuning. 
+As an additional layer of robustness, for both the traditional and CNN approach, we are working on using homography to transform the camera perspective to a perfect overhead view. It will add an additional level of consistency that should ideally improve both methods. Initial attempts have been through RANSAC methods for finding the edges and corners of the boxes. Results have been promising on a small subset of the images; however, this needs to be proven on a larger set of images to show that it generalizes effectively. 
+</p>
+<p>
+Error 2: Robot malfunctions and stops moving
+During this error, one of the robots stops moving. To detect this error, one robot will occasionally observe the other robot. Each of their joints has a gray circle and each arm segment contains a blue band. By looking at the relations between the bands and using a homography to always project them into the same plane, we can determine if the robot is in the same configuration as the last time it was observed. If the robot is in the same configuration for a few observations then it has probably stopped moving and decision needs to be made about how to progress.
 										</p>
 										<p></p>
 									</div>
@@ -273,12 +299,20 @@
 										<h2 class="colorlib-heading">Experiment and Results</h2>
 										<p>
 											The experiment consists of using two Fetch Mobile Manipulators. Each will operate in its own space and will have no physical interaction with the other, but will be in close proximity (close enough to visually obverse one another). Both will have knowledge of its own tasks and the global set of tasks. We will be using the DERAIL library to have the robot attempt the tasks. Additional actions will be added to cause “errors/slowdowns” and to visually observe the other robot and detect any errors or significant slowdowns.
-										</p>
-										<p>
+</p>
+<p>
+	More specifically, we will run a Pick-and-Place task in order to evaluate the system. In the task, robot A will be performing a Pick-and-Place task in which the robot will be tasked with moving screws and gears from an open box into a storage pegboard. During the task robot A will also be tasked with watching robot B, robot A will need to visually sense when robot B is erroring and notify the human of all errors made by robot B.
+</p>
+<p>
+We will run a set of 20 experiments where each experiment robot B will be programmed to randomly execute in one of 3 modes. In mode 1, robot B will purposefully fault with error 1. In mode 2, robot B will purposefully fault in error 2. In mode 3, robot B will operate normally.
+Robot B will then have a "checking task" added to his defualt task loop where it will look to see if Robot B has faulted. We will measure the precision, recall and accuracy ability of robot A to identify the possible operating mode/errors of robot B.  
+ 									</p>
+<!--										<p>
 											We will simulate many different errors on one of the Fetch Robots and test if the other robot completes the task by completing more work or helping the other robot. Failures can include a complete malfunction (robot stops working), a slow down in the time it takes to complete a task or an error in localization. We expect the experiments to reveal if our system performs correctly and our key metric is whether all work gets finished regardless. Uncertainties at this point include the extent of the errors and the amount of information that will be communicated between the two robots.
 
 										</p>
-										<p></p>
+-->
+									<p></p>
 									</div>
 								</div>
 							</div>
@@ -315,9 +349,21 @@
 										      		<div class="col-md-6">
 										      		<h4>Results 1 </h4>
 										      			<p>
-															Currently in Construction
+										Since the systems needed to accomplish the goal are still being worked on, we are unable to show clear quantitative results. However, we are able to lay out a clear plan of the metrics that we wish to collect and how we hope to analyze our data.
+</p>
+<p>
+In order to test our CNN classifier, we are currently in the process of collecting a large dataset of 100’s of pictures of each of the gears and bolts discussed in the experiment section. These pictures contain a variety of combinations of each of these parts in a variety of positions and orientations. Once this dataset is collected we hope to use 80% of it for training and save the last 20% to be used as test data. From this test data, we hope to be able to show several interesting metrics such as recall and precision for each of the parts as well as a full confusion matrix for all of the parts.
+</p>
+<p>
+In order to test our robot configuration estimator, we are planning on running a test to compare the robots’ known joint position in a variety of configurations to those calculated by our robot configuration estimator. Using this we hope to calculate the average error of our system compared to the ground truth.
+</p>
+<p>
+In order to test our item placement visual system, we hope to be able to perform several test placements and show the accuracy of the system.
+Finally, in order to evaluate the system as a whole, we will be running the Pick-and-Place task described above.  In this test, we will evaluate the performance of robot A by how accurately it is at completing its task and how accurately it can sense robot B errors.
+</p>
+		
 
-														</p>
+														
 										      		</div>
 
 										      	</div>
@@ -430,7 +476,8 @@
 										<span class="heading-meta">What did we learn?</span>
 										<h2 class="colorlib-heading">Conclusion</h2>
 										<p>
-											Currently Under Construction
+											Due to the fact that results from the experiment are still pending, concluding statements can not be made about the validity of the work. However, if this method is effective, there are several interesting avenues available for future work. If we are able to consistently visually detect errors, we may be able to use this information to modify the robot’s list of possible actions to remove actions that have a higher chance of causing errors. Once modified this new action space could be useful in helping develop a dynamic planning algorithm. Also, if agents are capable of recognizing the errors of other robots in a cluster this information could be used to develop algorithms for decentralized cluster behaviors. Finally work like this could be used to develop error recovery strategies that can allow for autonomous correction of errors that have already occurred.
+
 										</p>
 										<p></p>
 									</div>
@@ -474,7 +521,20 @@
 										<span class="heading-meta">References and Citations</span>
 										<h2 class="colorlib-heading">References</h2>
 										<p>
-											Currently Under Construction
+											[1] Chollet, François. “Keras.” Keras, GitHub, 2015, GitHub.
+</p>
+<p> 
+[2] Banerjee, Siddhartha, et al. "Taking Recoveries to Task: Recovery-Driven Development for Recipe-based Robot Tasks."
+</p>
+<p>
+[3] Ortenzi, Valerio et al. “Vision-Based Framework to Estimate Robot Configuration and Kinematic Constraints.” IEEE/ASME Transactions on Mechatronics 23 (2018): 2402-2412.
+</p>
+<p>
+[4] X. Li and L. E. Parker, "Sensor Analysis for Fault Detection in Tightly-Coupled Multi-Robot Team Tasks," Proceedings 2007 IEEE International Conference on Robotics and Automation, Roma, 2007, pp. 3269-3276.
+</p>
+<p>
+[5] E. Khalastchi and M. Kalech, “Fault Detection and Diagnosis in Multi-Robot Systems: A Survey,” Sensors, vol. 19, no. 18, 2019.
+
 										</p>
 										<p></p>
 									</div>
@@ -496,7 +556,15 @@
 										<span class="heading-meta">Who are We?</span>
 										<h2 class="colorlib-heading">Team</h2>
 										<p>
-											Andrew Messing, Glen Neville, Carter Price, and Sean Ye
+											Andrew "Da big BICEPTS" Messing
+										</p>
+										<p>	 
+										Glen "trivia boss" Neville, 
+</p>
+<p>
+Carter "money time" Price 
+</p>
+<p> Sean "YEEEEHAWW" Ye
 										</p>
 										<p></p>
 									</div>
