@@ -1,0 +1,668 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>C-SAG COmputer Vision Project</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="description" content="" />
+	<meta name="keywords" content="" />
+	<meta name="author" content="" />
+
+  <!-- Facebook and Twitter integration -->
+	<meta property="og:title" content=""/>
+	<meta property="og:image" content=""/>
+	<meta property="og:url" content=""/>
+	<meta property="og:site_name" content=""/>
+	<meta property="og:description" content=""/>
+	<meta name="twitter:title" content="" />
+	<meta name="twitter:image" content="" />
+	<meta name="twitter:url" content="" />
+	<meta name="twitter:card" content="" />
+
+	<!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
+	<link rel="shortcut icon" href="favicon.ico">
+
+	<link href="https://fonts.googleapis.com/css?family=Quicksand:300,400,500,700" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css?family=Playfair+Display:400,400i,700" rel="stylesheet">
+	
+	<!-- Animate.css -->
+	<link rel="stylesheet" href="css/animate.css">
+	<!-- Icomoon Icon Fonts-->
+	<link rel="stylesheet" href="css/icomoon.css">
+	<!-- Bootstrap  -->
+	<link rel="stylesheet" href="css/bootstrap.css">
+	<!-- Flexslider  -->
+	<link rel="stylesheet" href="css/flexslider.css">
+	<!-- Flaticons  -->
+	<link rel="stylesheet" href="fonts/flaticon/font/flaticon.css">
+	<!-- Owl Carousel -->
+	<link rel="stylesheet" href="css/owl.carousel.min.css">
+	<link rel="stylesheet" href="css/owl.theme.default.min.css">
+	<!-- Theme style  -->
+	<link rel="stylesheet" href="css/style.css">
+
+	<!-- Modernizr JS -->
+	<script src="js/modernizr-2.6.2.min.js"></script>
+	<!-- FOR IE9 below -->
+	<!--[if lt IE 9]>
+	<script src="js/respond.min.js"></script>
+	<![endif]-->
+
+	</head>
+	<body>
+
+	<div id="colorlib-page">
+		<div class="container-wrap">
+		<a href="#" class="js-colorlib-nav-toggle colorlib-nav-toggle" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar"><i></i></a>
+		<aside id="colorlib-aside" role="complementary" class="border js-fullheight">
+			<div class="text-center">
+				<div class="author-img" style="background-image: url(images/fetch.jpg);"></div>
+				<h1 id="colorlib-logo"><a href="index.html">C-SAG</a></h1>
+				<span class="position"><a href=""> Computer Vision Group</a> for CS6476</span>
+			</div>
+			<nav id="colorlib-main-menu" role="navigation" class="navbar">
+				<div id="navbar" class="collapse">
+					<ul>
+						<li class="active"><a href="#" data-nav-section="home">Home</a></li>
+						<li><a href="#" data-nav-section="problem">Problem Statment</a></li>
+						<li><a href="#" data-nav-section="abstract">Abstract</a></li>
+						<li><a href="#" data-nav-section="teaser">Teaser</a></li>
+						<li><a href="#" data-nav-section="intro">Introduction</a></li>
+						<li><a href="#" data-nav-section="approach">Approach</a></li>
+						<li><a href="#" data-nav-section="experiment">Experiments</a></li>
+						<li><a href="#" data-nav-section="results">Results</a></li>
+						<li><a href="#" data-nav-section="qual">Qualitative Results</a></li>
+						<li><a href="#" data-nav-section="conclusion">Conclusion</a></li>
+						<li><a href="#" data-nav-section="future">Future Work</a></li>
+						<li><a href="#" data-nav-section="ref">References</a></li>
+						<li><a href="#" data-nav-section="team">Team</a></li>
+					</ul>
+				</div>
+			</nav>
+
+			<div class="colorlib-footer"
+					<ul>
+						<li><a href="gneville6@gatech.edu"><i class="icon-mail"></i></a>Email  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;   </li>
+						<li><a href="https://github.com/gneville6/C-SAG"><i class="icon-github"></i></a>GitHub  &nbsp;&nbsp;&nbsp;</li>
+						<li><a href="https://samyak-268.github.io/F19CS6476/"><i class="icon-libreoffice"></i></a> Project Description </li>
+						<li><a href="https://gtvault-my.sharepoint.com/:f:/g/personal/gneville6_gatech_edu/EssIxJUnS4dBlx0U8bG_HjgBK0SWdN_PlJkI-TXJ_14iyA?e=ufoK89"><i class="icon-database"></i></a> DataSet </li>
+
+					</ul>
+			</div>
+
+		</aside>
+
+		<div id="colorlib-main">
+			<section id="colorlib-hero" class="js-fullheight" data-section="home">
+				<div class="flexslider js-fullheight">
+					<ul class="slides">0
+				   	<li style="background-image: url(images/laptop.jpg); background-position: left; ">
+				   		<div class="overlay"></div>
+				   		<div class="container-fluid">
+				   			<div class="row">
+					   			<div class="col-md-6 col-md-offset-3 col-md-pull-3 col-sm-12 col-xs-12 js-fullheight slider-text">
+					   				<div class="slider-text-inner js-fullheight">
+					   					<div class="desc">
+						   					<h1>Hi! <br>We're C-SAG</h1>
+						   					<h2>a computer vision group in the Georgia Tech CS6476 </h2>
+											<h2>Class and below is our final project</h2>
+												<p><a href="https://github.com/gneville6/C-SAG" class="btn btn-primary btn-learn">See the Code <i class="icon-download4"></i></a></p>
+											</div>
+					   				</div>
+					   			</div>
+					   		</div>
+				   		</div>
+				   	</li>
+				  	</ul>
+			  	</div>
+			</section>
+
+			<section class="colorlib-about" data-section="problem">
+				<div class="colorlib-narrow-content">
+					<div class="row">
+						<div class="col-md-12">
+							<div class="row row-bottom-padded-sm animate-box" data-animate-effect="fadeInLeft">
+								<div class="col-md-12">
+									<div class="about-desc">
+										<span class="heading-meta">About the Problem?</span>
+										<h2 class="colorlib-heading">Problem Statement</h2>
+										<p>
+											A team of two robots (A and B) are attempting to perform a set of tasks
+											in parallel. If robot A fails a specific task, how can this failure or error
+											be detected and resolved so that the total throughput is still optimized?
+											In the base case, a failure will go unnoticed and the set of tasks for robot
+											A will be compromised. If the error is caught in a sufficient amount of time,
+											the error can be corrected or mitigated and the set of tasks performed by robot
+											A will still yield positive results. </p>
+										<p></p>
+									</div>
+								</div>
+							</div>
+
+						</div>
+					</div>
+				</div>
+
+
+			</section>
+
+			<section class="colorlib-about" data-section="abstract">
+				<div class="colorlib-narrow-content">
+					<div class="row">
+						<div class="col-md-12">
+							<div class="row row-bottom-padded-sm animate-box" data-animate-effect="fadeInLeft">
+								<div class="col-md-12">
+									<div class="about-desc">
+										<span class="heading-meta">Goals</span>
+										<h2 class="colorlib-heading">Abstract</h2>
+										<p>
+											Multi-agent systems in the real world require collaboration between robotic agents in order to effectively accomplish tasks. However, robotic errors can hamper the performance of a multi-agent system. Our hope is to provide a method that allows robots to cross-check the progress of other agents and plan around these failures to ensure the team's successful completion of a set of tasks. In order to test this system, we propose a simple Pick-and-Place task where a team of robots works to place different size gears into a pegboard in specific locations. We plan to train a convolutional neural net to do the classification of the various gears that the robots will interact with. We also plan to use more classical vision techniques including color filtering, contour localization, homographies, template matching, ransac and sift to locate holes to place parts into. Finally, we plan to use a variant of the framework found in [3] to detect the configuration of the robot in order to determine errors in the robot’s motion. We currently are still implementing some parts of this proposed system and are therefore unable to show results at this time. However, we hope to be able to show that robots can use visual clues to recognize the errors of other agents and effectively replan.
+
+										</p>
+										<p></p>
+									</div>
+								</div>
+							</div>
+
+						</div>
+					</div>
+				</div>
+
+
+			</section>
+
+			<section class="colorlib-about" data-section="teaser">
+				<div class="colorlib-narrow-content">
+					<div class="row">
+						<div class="col-md-12">
+							<div class="row row-bottom-padded-sm animate-box" data-animate-effect="fadeInLeft">
+								<div class="col-md-12">
+									<div class="about-desc">
+										<span class="heading-meta">Just a Sample</span>
+										<h2 class="colorlib-heading">Teaser</h2>
+										<p>
+											A team of two robots (A and B) are attempting to perform a set of tasks in parallel. If robot B fails a specific task, how can this failure or error be detected and resolved such that the total throughput is still optimized? In the base case, a failure will go unnoticed and the set of tasks for robot B will be compromised. If the error is caught in a sufficient amount of time, the error can be corrected or mitigated and the set of tasks performed by robot B will still yield positive results. In order to test if this can be done we devised the following scenario. In this scenario, a team of two robots (A and B) are to move a cluttered collection of screws and bolts from a box into a pegboard. During the task,  robot A will also be tasked with watching robot B (who will be performing a similar task). Robot A will need to visually sense when robot B is erroring and notify the human of all errors made by robot B.
+
+										</p>
+
+											<div class="row row-bottom-padded-sm animate-box" data-animate-effect="fadeInLeft">
+												<!--
+												<div class="col-md-12">
+													<p class="work-menu"><span><a href="#" class="active">Graphic Design</a></span> <span><a href="#">Web Design</a></span> <span><a href="#">Software</a></span> <span><a href="#">Apps</a></span></p>
+												</div>
+												-->
+											</div>
+											<div class="row">
+												<div class="col-md-6 animate-box" data-animate-effect="fadeInLeft">
+													<div class="project" style="background-image: url(images/robots_task.jpg);">
+														<div class="desc">
+															<div class="con">
+																<h3><a href="#" data-nav-section="home">Teaser Image</a></h3>
+																<span>Teaser Image of Robots Performing Task</span>
+															</div>
+														</div>
+													</div>
+												</div>
+											</div>
+
+									</div>
+								</div>
+							</div>
+
+						</div>
+					</div>
+				</div>
+
+
+			</section>
+
+			<section class="colorlib-about" data-section="intro">
+				<div class="colorlib-narrow-content">
+					<div class="row">
+						<div class="col-md-12">
+							<div class="row row-bottom-padded-sm animate-box" data-animate-effect="fadeInLeft">
+								<div class="col-md-12">
+									<div class="about-desc">
+										<span class="heading-meta">Intro to Our Work</span>
+										<h2 class="colorlib-heading">Introduction</h2>
+										<p>
+											The goal of this project is to enable robots to monitor each other periodically using computer vision to mitigate the errors that may occur. For example, robot A, while working on completing its own set of tasks, can glance over and observe robot B operating in its workspace and determine if everything is going smoothly or if intervention of some type is needed.
+
+											</p>
+										<p>
+											The experimental setup we have created includes two Fetch Mobile Manipulators. Each will operate in its own space and will have no physical interaction with the other, but will be facing each other such that they can visually observe one another. (Teaser Figure) Both will have knowledge of its own set of tasks and the global set of tasks. The task we have chosen is a Pick-and-Place task where we move screws and gears from one bin to the other. Both robots will be conducting the same task separately and monitor the other robot.
+										</p>
+										<p>
+											Our approach is unique because existing approaches to monitoring faults in multi-robot systems [4, 5] do not use vision. By utilizing vision, our system is not dependent on outside factors such as the network connection or internal sensors to influence whether the robots will be able to communicate with each other. Therefore teammates are able to take over tasks and complete overall objectives.
+
+										</p>
+										<p></p>
+									</div>
+								</div>
+							</div>
+
+						</div>
+					</div>
+				</div>
+
+
+			</section>
+
+			<section class="colorlib-about" data-section="approach">
+				<div class="colorlib-narrow-content">
+					<div class="row">
+						<div class="col-md-12">
+							<div class="row row-bottom-padded-sm animate-box" data-animate-effect="fadeInLeft">
+								<div class="col-md-12">
+									<div class="about-desc">
+										<span class="heading-meta">How we did it</span>
+										<h2 class="colorlib-heading">Approach</h2>
+										<p>
+											There are two different high level tasks required to test and implement a solution. The first is implementing the robot tasks while the second is the vision system for error detection.
+
+										</p>
+										<p>
+											In order to build out the Pick-and-Place task that we will be testing with we are bootstrapping the task from the GT-Rail FetchIt challenge codebase. This codebase has a hierarchical task action layout that allows for quicker extensions of robot task. Updating this existing code to perform new tasks and allow the robots to work simultaneously.
+										</p>
+										<p>
+											The existing library is able to pick the commanded part out of the bucket, however, we will need to implement new tasks to place the screws or gears in the appropriate holes in the peg board. To accomplish this goal, we will orient the part in the air and position over the hole. Then have the robot move in the Z direction and release the grip to drop it in the hole.
+										</p>
+										<p>
+											For the vision portion of the project, different approaches were used to identify the different types of errors. Here we will focus on three errors: a robot misplacing a screw into a bin, a robot not having the correct number of part in their input bin and a robot malfunctioning and stopping.
+										</p>
+										<b>	Error 1: Robot misplacing a screw </b>
+
+										<p>In this error, one of the robots misplaces an item in its output bin. To detect this error, the checker robot checks the contents of the output pegboard. For this implementation, we utilized OpenCV functions to find the contour of the box, crop the image to only include the pegboard, apply a mask for the screws, dilate and erode the mask, and finally count the number of screw contours. We also hope to use similar methods to confirm that each of the screws has been placed into the correct pegboard location.
+										</p>
+										<b>Error 2: Robot malfunctions and stops moving </b>
+										<p>
+										During this error, one of the robots stops moving. To detect this error, one robot will occasionally observe the other robot. Each of their joints has a gray circle and each arm segment contains a blue band. By looking at the relations between the bands and using a homography to always project them into the same plane, we can determine if the robot is in the same configuration as the last time it was observed. If the robot is in the same configuration for a few observations then it has probably stopped moving and decision needs to be made about how to progress.
+										</p>
+										<b>	Error 3: Robot does not have a full set of parts in their pick-up bin</b>
+										<p>
+										In this error, one of the robots does not have all the parts needed to complete their kit in their pick-up box. To detect this error, the checker robot checks the contents of the output box and the pegboard. For this implementation, we utilized we use the method discussed in error 1 to check the contents of the pegboard. Then OpenCV functions to find the contour of the box, crop the image to only include the pick-up box, apply a mask for the screws/gears, dilate and erode the mask, and finally count the number of part contours. One major downside of this method is that it has been subject to false positives when we have glare from ambient lighting. We are currently investigating methods to filter the glare such as bright spot color filtering. Additionally, there have been false positives due to objects in the background of the image. We are working on removing the background once the initial contour of the box has been found. We also hope to use similar methods to confirm that each of the screws has been placed into the correct pe
+										</p>
+										<p>
+										Given the shortcomings of the traditional methods, we are also pursuing a parallel strategy of utilizing convolutional neural networks to detect the gears and screws in the box. We have already collected over 20 minutes of varied video data while shaking the box with different number of parts in it. This data will be used to help train the model. Seperate videos were taken for each of the different combinations of parts. During the videos the box containing the parts was shook to change the positions and orientations. We plan to separate each video into individual frames and label all frames with the same label. We then hope to train the CNN on these pictures using 80% for training, 10% for testing and 10% for evaluation.
+										</p>
+										<p>
+										As an additional layer of robustness, for both the traditional and CNN approach, we are working on using homography to transform the camera perspective to a perfect overhead view. It will add an additional level of consistency that should ideally improve both methods. Initial attempts have been through RANSAC methods for finding the edges and corners of the boxes. Results have been promising on a small subset of the images; however, this needs to be proven on a larger set of images to show that it generalizes effectively.
+
+										</p>
+										<p></p>
+									</div>
+								</div>
+							</div>
+
+						</div>
+					</div>
+				</div>
+
+
+			</section>
+
+			<div id="colorlib-counter" class="colorlib-counters" style="background-image: url(images/tech-tower.jpg);" data-stellar-background-ratio="0.5">
+				<div class="overlay"></div>
+				<div class="colorlib-narrow-content">
+					<div class="row">
+					</div>
+					<div class="row">
+						<div class="col-md-3 text-center animate-box">
+							<span class="colorlib-counter js-counter" data-from="0" data-to="4000" data-speed="5000" data-refresh-interval="50"></span>
+							<span class="colorlib-counter-label">+ Lines of Code</span>
+						</div>
+						<div class="col-md-3 text-center animate-box">
+							<span class="colorlib-counter js-counter" data-from="0" data-to="456" data-speed="5000" data-refresh-interval="50"></span>
+							<span class="colorlib-counter-label">Cups of coffee</span>
+						</div>
+						<div class="col-md-3 text-center animate-box">
+							<span class="colorlib-counter js-counter" data-from="0" data-to="3" data-speed="5000" data-refresh-interval="50"></span>
+							<span class="colorlib-counter-label">Weeks until Due</span>
+						</div>
+						<div class="col-md-3 text-center animate-box">
+							<span class="colorlib-counter js-counter" data-from="0" data-to="4" data-speed="5000" data-refresh-interval="50"></span>
+							<span class="colorlib-counter-label">Teammates</span>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<section class="colorlib-about" data-section="experiment">
+				<div class="colorlib-narrow-content">
+					<div class="row">
+						<div class="col-md-12">
+							<div class="row row-bottom-padded-sm animate-box" data-animate-effect="fadeInLeft">
+								<div class="col-md-12">
+									<div class="about-desc">
+										<span class="heading-meta">Experiments Run</span>
+										<h2 class="colorlib-heading">Experiment</h2>
+										<p>
+											Our experiment will be to run a Pick-and-Place task. In the task, robot A will be performing a Pick-and-Place task in which the robot will be tasked with moving screws and gears from an open box into a storage pegboard. During the task robot A will also be tasked with watching robot B, robot A will need to visually sense when robot B is erroring and notify the human of all errors made by robot B.
+										</p>
+										<p>
+											We will run a set of 20 experiments where each experiment robot B will be programmed to randomly execute in one of 3 modes. In mode 1, robot B will purposefully fault with error 1.In mode 2, robot B will purposefully fault in error 2. In mode 3, robot B will operate normally. Robot A will then have a "checking task" added to his default task loop where it will look to see if Robot A has faulted.
+										</p>
+										<p>
+											We will measure the precision, recall and accuracy ability of Robot A to identify the possible error status of Robot B.
+
+										</p>
+										<p></p>
+									</div>
+								</div>
+							</div>
+
+						</div>
+					</div>
+				</div>
+
+
+			</section>
+
+			<section class="colorlib-education" data-section="results">
+				<div class="colorlib-narrow-content">
+					<div class="row">
+						<div class="col-md-6 col-md-offset-3 col-md-pull-3 animate-box" data-animate-effect="fadeInLeft">
+							<span class="heading-meta">What did we find</span>
+							<h2 class="colorlib-heading animate-box">Results</h2>
+							<p>Since the systems needed to accomplish the goal are still being worked on, we are unable to show clear quantitative results. However, we are able to lay out a clear plan of the metrics that we wish to collect and how we hope to analyze our data. The analysis plan has four parts.</p>
+						</div>
+
+					</div>
+
+					<div class="row">
+						<div class="col-md-12 animate-box" data-animate-effect="fadeInLeft">
+							<div class="fancy-collapse-panel">
+								<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+									<div class="panel panel-default">
+									    <div class="panel-heading" role="tab" id="headingOne">
+									        <h4 class="panel-title">
+									            <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">Classifier Analysis </a>
+
+									        </h4>
+
+									    </div>
+									    <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
+									         <div class="panel-body">
+									            <div class="row">
+										      		<div class="col-md-6">
+										      		<h4>Classifier Analysis </h4>
+										      			<p>
+															In order to test our CNN classifier, we are currently in the process of collecting a large dataset of 100’s of pictures of each of the gears and bolts discussed in the experiment section. These pictures contain a variety of combinations of each of these parts in a variety of positions and orientations. Once this dataset is collected we hope to use 80% of it for training and save the last 10% to be used as test data and 10% as evaluation data. From this test data, we hope to be able to show several interesting metrics such as recall and precision for each of the parts as well as a full confusion matrix for all of the parts.
+
+
+														</p>
+										      		</div>
+
+										      	</div>
+									         </div>
+									    </div>
+									</div>
+									<div class="panel panel-default">
+									    <div class="panel-heading" role="tab" id="headingTwo">
+									        <h4 class="panel-title">
+									            <a class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">Configuration Estimator Analysis
+									            </a>
+									        </h4>
+									    </div>
+									    <div id="collapseTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo">
+									        <div class="panel-body">
+									        <h4>Configuration Estimator Analysis </h4>
+									            <p>
+													In order to test our robot configuration estimator, we are planning on running a test to compare the robots’ known joint position in a variety of configurations to those calculated by our robot configuration estimator. Using this we hope to calculate the average error of our system compared to the ground truth.
+
+                                                           </p></p>
+									        </div>
+									    </div>
+									</div>
+									<div class="panel panel-default">
+									    <div class="panel-heading" role="tab" id="headingThree">
+									        <h4 class="panel-title">
+									            <a class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseThree" aria-expanded="false" aria-controls="collapseThree">Pegboard Placement System
+									            </a>
+									        </h4>
+									    </div>
+									    <div id="collapseThree" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingThree">
+									            <div class="panel-body">
+									            <h4>Pegboard Placement System </h4>
+									            <p>
+													In order to test our item placement visual system, we hope to be able to perform several test placements and show the accuracy of the system.
+
+												</p>
+									        </div>
+									    </div>
+									</div>
+
+									<div class="panel panel-default">
+									    <div class="panel-heading" role="tab" id="headingFour">
+									        <h4 class="panel-title">
+									            <a class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseFour" aria-expanded="false" aria-controls="collapseFour"> Entire Error Detection System
+									            </a>
+									        </h4>
+									    </div>
+									    <div id="collapseFour" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingFour">
+									        <div class="panel-body">
+									        <h4>Entire Error Detection System </h4>
+									            <p>
+													Finally, in order to evaluate the system as a whole, we will be running the Pick-and-Place task described above.  In this test, we will evaluate the performance of robot A by how accurately it is at completing its task and how accurately it can sense robot B errors.
+
+												</p>
+									        </div>
+									    </div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</section>
+
+			<section class="colorlib-work" data-section="qual">
+				<div class="colorlib-narrow-content">
+					<div class="row">
+						<div class="col-md-6 col-md-offset-3 col-md-pull-3 animate-box" data-animate-effect="fadeInLeft">
+							<span class="heading-meta">Pictures of Work</span>
+							<h2 class="colorlib-heading animate-box">Qualitative Results</h2>
+
+						</div>
+						<div class="col-md-6 col-md-offset-3 col-md-pull-3 animate-box" data-animate-effect="fadeInLeft">
+						</div>
+						<div class="col-md-6 col-md-offset-3 col-md-pull-3 animate-box" data-animate-effect="fadeInLeft">
+
+						<p>Below are a collection of images from our initial attempts to make a classifier for the gears
+							using classical computer vision techniques. We hope to use these techniques to pre-process
+							the data for our CNN</p>
+						</div>
+					</div>
+					<div class="row row-bottom-padded-sm animate-box" data-animate-effect="fadeInLeft">
+						<!--
+						<div class="col-md-12">
+							<p class="work-menu"><span><a href="#" class="active">Graphic Design</a></span> <span><a href="#">Web Design</a></span> <span><a href="#">Software</a></span> <span><a href="#">Apps</a></span></p>
+						</div>
+						-->
+					</div>
+					<div class="row">
+						<div class="col-md-6 animate-box" data-animate-effect="fadeInLeft">
+							<div class="project" style="background-image: url(images/screw1.jpg);">
+								<div class="desc">
+									<div class="con">
+										<h3><a href="#" data-nav-section="home">Part Segmentation 1</a></h3>
+										<span>Image of Parts with background removed</span>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="col-md-6 animate-box" data-animate-effect="fadeInRight">
+							<div class="project" style="background-image: url(images/screw2.jpg);">
+								<div class="desc">
+									<div class="con">
+										<h3><a href="#" data-nav-section="home">Part Segmentation 2</a></h3>
+										<span>Image of Parts with background removed</span>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="col-md-6 animate-box" data-animate-effect="fadeInRight">
+							<div class="project" style="background-image: url(images/screw3.jpg);">
+								<div class="desc">
+									<div class="con">
+										<h3><a href="#" data-nav-section="home">Part Segmentation 3</a></h3>
+										<span>Image of Parts with background removed</span>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<div class="col-md-6 animate-box" data-animate-effect="fadeInRight">
+							<iframe width="100%" height="300"
+											src="https://www.youtube.com/embed/ydvT8_d80gg">
+							</iframe>
+						</div>
+					</div>
+				</div>
+			</section>
+
+			<section class="colorlib-about" data-section="conclusion">
+				<div class="colorlib-narrow-content">
+					<div class="row">
+						<div class="col-md-12">
+							<div class="row row-bottom-padded-sm animate-box" data-animate-effect="fadeInLeft">
+								<div class="col-md-12">
+									<div class="about-desc">
+										<span class="heading-meta">What did we learn?</span>
+										<h2 class="colorlib-heading">Conclusion</h2>
+										<p>
+											Due to the fact that results from the experiment are still pending, concluding statements can not be made about the validity of the work.
+										</p>
+										<p></p>
+									</div>
+								</div>
+							</div>
+
+						</div>
+					</div>
+				</div>
+			</section>
+
+			<section class="colorlib-about" data-section="future">
+				<div class="colorlib-narrow-content">
+					<div class="row">
+						<div class="col-md-12">
+							<div class="row row-bottom-padded-sm animate-box" data-animate-effect="fadeInLeft">
+								<div class="col-md-12">
+									<div class="about-desc">
+										<span class="heading-meta">Whats Next?</span>
+										<h2 class="colorlib-heading">Conclusions and Future Work</h2>
+										<p>
+											If this method is effective, there are several interesting avenues available for future work. If we are able to consistently visually detect errors, we may be able to use this information to modify the robot’s list of possible actions to remove actions that have a higher chance of causing errors. Once modified this new action space could be useful in helping develop a dynamic planning algorithm. Also, if agents are capable of recognizing the errors of other robots in a cluster this information could be used to develop algorithms for decentralized cluster behaviors. Finally work like this could be used to develop error recovery strategies that can allow for autonomous correction of errors that have already occurred.
+
+										</p>
+										<p></p>
+									</div>
+								</div>
+							</div>
+
+						</div>
+					</div>
+				</div>
+			</section>
+
+			<section class="colorlib-about" data-section="ref">
+				<div class="colorlib-narrow-content">
+					<div class="row">
+						<div class="col-md-12">
+							<div class="row row-bottom-padded-sm animate-box" data-animate-effect="fadeInLeft">
+								<div class="col-md-12">
+									<div class="about-desc">
+										<span class="heading-meta">References and Citations</span>
+										<h2 class="colorlib-heading">References</h2>
+										<p>
+											[1] Chollet, François. “Keras.” Keras, GitHub, 2015, GitHub.
+										</p>
+										<p>
+											[2] Banerjee, Siddhartha, et al. "Taking Recoveries to Task: Recovery-Driven Development for Recipe-based Robot Tasks."
+										</p>
+										<p>
+											[3] Ortenzi, Valerio et al. “Vision-Based Framework to Estimate Robot Configuration and Kinematic Constraints.” IEEE/ASME Transactions on Mechatronics 23 (2018): 2402-2412.
+										</p>
+										<p>
+											[4] X. Li and L. E. Parker, "Sensor Analysis for Fault Detection in Tightly-Coupled Multi-Robot Team Tasks," Proceedings 2007 IEEE International Conference on Robotics and Automation, Roma, 2007, pp. 3269-3276.
+										</p>
+										<p>
+											[5] E. Khalastchi and M. Kalech, “Fault Detection and Diagnosis in Multi-Robot Systems: A Survey,” Sensors, vol. 19, no. 18, 2019.
+
+										</p>
+										<p></p>
+									</div>
+								</div>
+							</div>
+
+						</div>
+					</div>
+				</div>
+			</section>
+
+			<section class="colorlib-about" data-section="Team">
+				<div class="colorlib-narrow-content">
+					<div class="row">
+						<div class="col-md-12">
+							<div class="row row-bottom-padded-sm animate-box" data-animate-effect="fadeInLeft">
+								<div class="col-md-12">
+									<div class="about-desc">
+										<span class="heading-meta">Who are We?</span>
+										<h2 class="colorlib-heading">Team</h2>
+										<p>
+											Andrew Messing, Glen Neville, Carter Price, and Sean Ye
+										</p>
+										<p></p>
+									</div>
+								</div>
+							</div>
+
+						</div>
+					</div>
+				</div>
+			</section>
+
+		</div><!-- end:colorlib-main -->
+	</div><!-- end:container-wrap -->
+	</div><!-- end:colorlib-page -->
+
+	<!-- jQuery -->
+	<script src="js/jquery.min.js"></script>
+	<!-- jQuery Easing -->
+	<script src="js/jquery.easing.1.3.js"></script>
+	<!-- Bootstrap -->
+	<script src="js/bootstrap.min.js"></script>
+	<!-- Waypoints -->
+	<script src="js/jquery.waypoints.min.js"></script>
+	<!-- Flexslider -->
+	<script src="js/jquery.flexslider-min.js"></script>
+	<!-- Owl carousel -->
+	<script src="js/owl.carousel.min.js"></script>
+	<!-- Counters -->
+	<script src="js/jquery.countTo.js"></script>
+	
+	
+	<!-- MAIN JS -->
+	<script src="js/main.js"></script>
+
+	</body>
+</html>
+
+
+
+
+
+<!-- 
+TO DO 
+1)fix form
+2)form drop
+3)project
+4)master paper
+
+
+
+
+-->
+
