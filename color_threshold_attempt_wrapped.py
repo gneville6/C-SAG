@@ -18,9 +18,10 @@ from collections import Counter
 
 class ColorThresholdAttempt:
     def __init__(self):
-        self.blue_threshold_values = (np.array([99,50,50]), np.array([115,255,255])) # lower, upper
-        self.green_threshold_values = (np.array([60,0,0]), np.array([90,255,255]))  # lower, upper
-    
+        self.blue_threshold_values = (np.array([99,50,50]), np.array([115,255,255])) # lower values, upper values
+        self.green_threshold_values = (np.array([60,0,0]), np.array([90,255,255]))  # lower values, upper values
+        self.white_threshold_values = (np.array([0,0,230]), np.array([255,255,255]))
+
     def preview(self, im):
         cv2.imshow("preview", im)
         cv2.waitKey()
@@ -42,22 +43,28 @@ class ColorThresholdAttempt:
         res = cv2.bitwise_and(im,im, mask= mask)
         return mask
     
-    def threshold_white(self, im):
-        hsv = cv2.cvtColor(im, cv2.COLOR_BGR2HSV)
-        lower_white = np.array([0,0,230])
-        upper_white = np.array([255,255,255])
-        # Threshold the HSV image to get only blue colors
-        mask = cv2.inRange(hsv, lower_white, upper_white)
-        # Bitwise-AND mask and original image
-        res = cv2.bitwise_and(im,im, mask= mask)
-        return mask
-
     def open_close_image(self, binary_matrix, kernel_size):
         kernel = np.ones((kernel_size, kernel_size), np.uint8)
         erosion = cv2.erode(binary_matrix,kernel,iterations = 2)
         dilation = cv2.dilate(erosion,kernel,iterations = 1)
         return dilation
 
+    def resize_image(self, im, scale):
+        w = int(im.shape[0] * scale)
+        h = int(im.shape[1] * scale)
+        im = cv2.resize(im,(h,w))
+        return im
+
+    def process_images_from_folder(self, path):
+        lis = os.listdir(path)
+        # print(lis)
+        for item in lis:
+            im = cv2.imread(path + '/' + item)
+            im = self.resize_image(im, 0.25)
+            self.process_image(im)
+
+    def process_image(self, im):
+        self.preview(im)
 
 
     def run(self):
@@ -65,6 +72,7 @@ class ColorThresholdAttempt:
 
 
         lis = os.listdir('bin_images-jpg')
+        # print(lis)
 
         for item in lis:
             im = cv2.imread(path + '/' + item)
@@ -82,7 +90,7 @@ class ColorThresholdAttempt:
             #step 2 green threshold
             green_outline = self.threshold_color(im, self.green_threshold_values)
             
-            #find contours and select the controur with the greatest area
+            #find contours and select the contour with the greatest area
             im2, contours, hierarchy = cv2.findContours(green_outline, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
             #    cv2.drawContours(im, contours, -1, (0,255,0), 3)
             #    preview(im)
@@ -107,6 +115,7 @@ class ColorThresholdAttempt:
                 x_vals.append(bucket_cont[i][0][0])
                 y_vals.append(bucket_cont[i][0][1])
             
+            # RANSAC to find outline of bucket
             slope = []
             for i in range(0,10000):
                 rand = random.randint(0,len(x_vals)-1)
@@ -137,6 +146,7 @@ class ColorThresholdAttempt:
             x_max_ind = x_vals.index(max(x_vals))
             y_1 = y_vals[x_max_ind]
             cv2.circle(cont_pic,(y_1,x_1), 20, (0,0,255), -1)
+            
             #crop additional space off of the max values
             #figure out how to transform image/homography to overhead view
             cut_pad = 40    
@@ -155,7 +165,7 @@ class ColorThresholdAttempt:
             green_mask[:,:,1] = 100
             green_mask[:,:,2] = 1
             green = np.asarray(green_mask, dtype = 'uint8')
-            white = self.threshold_white(ROI)
+            white = self.threshold_color(ROI, self.white_threshold_values)
             result = cv2.bitwise_and(green,ROI, mask= white)
             for i in range(result.shape[0]):
                 for j in range(result.shape[1]):
@@ -186,4 +196,6 @@ class ColorThresholdAttempt:
 
 if __name__ == '__main__':
     attempt = ColorThresholdAttempt()
-    attempt.run()
+    # attempt.run()
+    path = 'bin_images-jpg'
+    attempt.process_images_from_folder(path)
