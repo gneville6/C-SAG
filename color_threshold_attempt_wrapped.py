@@ -50,22 +50,55 @@ class ColorThresholdAttempt:
         return dilation
 
     def resize_image(self, im, scale):
+        """
+        scales image
+        """
         w = int(im.shape[0] * scale)
         h = int(im.shape[1] * scale)
         im = cv2.resize(im,(h,w))
         return im
 
     def process_images_from_folder(self, path):
+        """
+        given path, process all images in folder
+        """
         lis = os.listdir(path)
-        # print(lis)
         for item in lis:
             im = cv2.imread(path + '/' + item)
             im = self.resize_image(im, 0.25)
             self.process_image(im)
 
     def process_image(self, im):
+        """ given opencv/numpy image, run the processing method """
         self.preview(im)
 
+    def RANSAC_slope_detection(self, cont_pic, x_vals, y_vals):
+        """ compute slopes of boundary detection given image and contour points """
+        # RANSAC to find outline of bucket
+        slope = []
+        for i in range(0,10000):
+            rand = random.randint(0,len(x_vals)-1)
+            x_1 = x_vals[rand]
+            y_1 = y_vals[rand]
+            rand = random.randint(0,len(x_vals)-1)
+            x_2 = x_vals[rand]
+            y_2 = y_vals[rand]
+            if (x_2 - x_1) == 0:
+                s = float('inf')
+                cept = x_2
+            else:
+                s = (y_2 - y_1)/(x_2 - x_1)
+                s = round(s)
+                cept = y_1 - s*x_1
+            slope.append((s,cept))
+
+        c = Counter(slope)
+        most = c.most_common(1)
+        x1 = int(0)
+        y1 = int(most[0][0][0]*x1 + most[0][0][1])
+        x2 = int(cont_pic.shape[1]-1)
+        y2 = int(most[0][0][0]*x2 + most[0][0][1])
+        cv2.line(cont_pic,(x1,y1),(x2,y2),(0,0,255),5)
 
     def run(self):
         path = 'bin_images-jpg'
@@ -106,42 +139,16 @@ class ColorThresholdAttempt:
             
             bucket_cont = np.asarray(cont[0])
             
-            
-                
             #grab the max & min X-Y values of the largest green contour
             x_vals = []
             y_vals = []
             for i in range(len(bucket_cont)):
                 x_vals.append(bucket_cont[i][0][0])
-                y_vals.append(bucket_cont[i][0][1])
+                y_vals.append(bucket_cont[i][0][1])            
             
-            # RANSAC to find outline of bucket
-            slope = []
-            for i in range(0,10000):
-                rand = random.randint(0,len(x_vals)-1)
-                x_1 = x_vals[rand]
-                y_1 = y_vals[rand]
-                rand = random.randint(0,len(x_vals)-1)
-                x_2 = x_vals[rand]
-                y_2 = y_vals[rand]
-                if (x_2 - x_1) == 0:
-                    s = float('inf')
-                    cept = x_2
-                else:
-                    s = (y_2 - y_1)/(x_2 - x_1)
-                    s = round(s)
-                    cept = y_1 - s*x_1
-                slope.append((s,cept))
 
-            c = Counter(slope)
-            most = c.most_common(1)
-            x1 = int(0)
-            y1 = int(most[0][0][0]*x1 + most[0][0][1])
-            x2 = int(cont_pic.shape[1]-1)
-            y2 = int(most[0][0][0]*x2 + most[0][0][1])
-            cv2.line(cont_pic,(x1,y1),(x2,y2),(0,0,255),5)
-            
-            
+            # self.RANSAC_slope_detection(cont_pic, x_vals, y_vals)
+
             x_1 = max(x_vals)
             x_max_ind = x_vals.index(max(x_vals))
             y_1 = y_vals[x_max_ind]
@@ -150,8 +157,7 @@ class ColorThresholdAttempt:
             #crop additional space off of the max values
             #figure out how to transform image/homography to overhead view
             cut_pad = 40    
-            x_max = max(x_vals) -cut_pad
-            
+            x_max = max(x_vals) - cut_pad
             x_min = min(x_vals) + cut_pad
             y_max = max(y_vals) - cut_pad
             y_min = min(y_vals) + cut_pad
@@ -196,6 +202,6 @@ class ColorThresholdAttempt:
 
 if __name__ == '__main__':
     attempt = ColorThresholdAttempt()
-    # attempt.run()
+    attempt.run()
     path = 'bin_images-jpg'
-    attempt.process_images_from_folder(path)
+    # attempt.process_images_from_folder(path)
