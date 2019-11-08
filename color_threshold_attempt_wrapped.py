@@ -18,8 +18,9 @@ from collections import Counter
 
 class ColorThresholdAttempt:
     def __init__(self):
-        pass
-
+        self.blue_threshold_values = (np.array([99,50,50]), np.array([115,255,255])) # lower, upper
+        self.green_threshold_values = (np.array([60,0,0]), np.array([90,255,255]))  # lower, upper
+    
     def preview(self, im):
         cv2.imshow("preview", im)
         cv2.waitKey()
@@ -28,24 +29,15 @@ class ColorThresholdAttempt:
     def save_image(self, image, name):
         cv2.imwrite(name,image)
     
-    def threshold_blue(self, im):
+    def threshold_color(self, im, threshold_values):
         # Convert BGR to HSV
         hsv = cv2.cvtColor(im, cv2.COLOR_BGR2HSV)
-        # define range of blue color in HSV
-        lower_blue = np.array([99,50,50])
-        upper_blue = np.array([115,255,255])
+
+        # define range colors in HSV
+        lower_threshold_value = threshold_values[0]
+        upper_threshold_value = threshold_values[1]
         # Threshold the HSV image to get only blue colors
-        mask = cv2.inRange(hsv, lower_blue, upper_blue)
-        # Bitwise-AND mask and original image
-        res = cv2.bitwise_and(im,im, mask= mask)
-        return mask
-        
-    def threshold_green(self, im):
-        hsv = cv2.cvtColor(im, cv2.COLOR_BGR2HSV)
-        lower_blue = np.array([60,0,0])
-        upper_blue = np.array([90,255,255])
-        # Threshold the HSV image to get only blue colors
-        mask = cv2.inRange(hsv, lower_blue, upper_blue)
+        mask = cv2.inRange(hsv, lower_threshold_value, upper_threshold_value)
         # Bitwise-AND mask and original image
         res = cv2.bitwise_and(im,im, mask= mask)
         return mask
@@ -65,6 +57,8 @@ class ColorThresholdAttempt:
         erosion = cv2.erode(binary_matrix,kernel,iterations = 2)
         dilation = cv2.dilate(erosion,kernel,iterations = 1)
         return dilation
+
+
 
     def run(self):
         path = 'bin_images-jpg'
@@ -86,7 +80,7 @@ class ColorThresholdAttempt:
             im = cv2.GaussianBlur(im,(7,7), 7)
             
             #step 2 green threshold
-            green_outline = self.threshold_green(im)
+            green_outline = self.threshold_color(im, self.green_threshold_values)
             
             #find contours and select the controur with the greatest area
             im2, contours, hierarchy = cv2.findContours(green_outline, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
@@ -171,7 +165,7 @@ class ColorThresholdAttempt:
             #blue_thresh = threshold_blue(ROI)
             #preview(blue_thresh) 
             
-            green_thresh = self.threshold_green(ROI)
+            green_thresh = self.threshold_color(ROI, self.green_threshold_values)
             #preview(green_thresh)
             green_thresh_inverted = cv2.bitwise_not(green_thresh)
             green_thresh_open_close = self.open_close_image(green_thresh_inverted, 4)
