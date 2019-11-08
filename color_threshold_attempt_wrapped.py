@@ -68,18 +68,7 @@ class ColorThresholdAttempt:
             im = self.resize_image(im, 0.25)
             self.process_image(im)
 
-    def crop_image_to_box_region(self, im):
-        ''' input raw image, return region of image that has the box inside '''
-        #step 1 gaussian blur
-        im = cv2.GaussianBlur(im,(7,7), 7)
-        
-        #step 2 green threshold for box
-        background_mask = self.threshold_color(im, self.green_threshold_values)
-        # self.preview(background_mask)
-
-        #find contours and select the contour with the greatest area
-        im2, contours, hierarchy = cv2.findContours(background_mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
-
+    def get_boundary_points_from_contour(self, contours):
         area = []
         for i in range(len(contours)):
             area.append(cv2.contourArea(contours[i]))
@@ -113,10 +102,25 @@ class ColorThresholdAttempt:
         x_min = min(x_vals) + cut_pad
         y_max = max(y_vals) - cut_pad
         y_min = min(y_vals) + cut_pad
+
+        return x_min, x_max, y_min, y_max
+
+    def crop_image_to_box_region(self, im):
+        ''' input raw image, return region of image that has the box inside '''
+        #step 1 gaussian blur
+        im = cv2.GaussianBlur(im,(7,7), 7)
+        
+        #step 2 green threshold for box
+        background_mask = self.threshold_color(im, self.green_threshold_values)
+        # self.preview(background_mask)
+
+        #find contours and select the contour with the greatest area
+        im2, contours, hierarchy = cv2.findContours(background_mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+
+        x_min, x_max, y_min, y_max = self.get_boundary_points_from_contour(contours)
         
         #crop to the sized of the max values on that contour
         ROI = im[y_min:y_max,x_min:x_max]
-        # self.preview(ROI)
 
         return ROI
 
