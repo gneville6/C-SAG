@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
 Created on Sun Oct 27 15:36:06 2019
@@ -93,47 +94,9 @@ class ColorThresholdAttempt:
             
         cont = sorted(contours, key = cv2.contourArea, reverse = True)
         cont_pic = im.copy()
-        cv2.drawContours(cont_pic, cont[0], -1, (0,255,0), 3) #grab the largest contour (should be the box)
-
-        self.preview(cont_pic)
-
-        rect = cv2.minAreaRect(cont[0])
-        box = cv2.boxPoints(rect)
-        box = np.int0(box)
-        # im = cv2.drawContours(im, [box], 0, (0, 0, 255), 2)
-
-        # get width and height of the detected rectangle
-        width = int(rect[1][0])
-        height = int(rect[1][1])
-
-        src_pts = box.astype("float32")
-        # corrdinate of the points in box points after the rectangle has been
-        # straightened
-        dst_pts = np.array([[0, height - 1],
-                            [0, 0],
-                            [width - 1, 0],
-                            [width - 1, height - 1]], dtype="float32")
-
-        # the perspective transformation matrix
-        M = cv2.getPerspectiveTransform(src_pts, dst_pts)
-
-        # directly warp the rotated rectangle to get the straightened rectangle
-        warped_im = cv2.warpPerspective(im, M, (width, height))
-
-        # self.preview(warped_im)
-
-        background_mask = self.threshold_color(warped_im, self.green_threshold_values)
-        contours_warped, hierarchy = cv2.findContours(background_mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
-        cont = sorted(contours_warped, key=cv2.contourArea, reverse=True)
-        cv2.drawContours(warped_im, cont[0], -1, (0, 255, 0), 3)  # grab the largest contour (should be the box)
-
-        self.preview(warped_im)
-
-        # print(cont)
-        # self.preview(warped)
-
-        # return warped #return just the box
-
+        cv2.drawContours(cont_pic, cont[0], -1, (0,255,0), 3)
+        # self.preview(cont_pic)
+        
         bucket_cont = np.asarray(cont[0])
 
         #grab the max & min X-Y values of the largest green contour
@@ -141,7 +104,7 @@ class ColorThresholdAttempt:
         y_vals = []
         for i in range(len(bucket_cont)):
             x_vals.append(bucket_cont[i][0][0])
-            y_vals.append(bucket_cont[i][0][1])
+            y_vals.append(bucket_cont[i][0][1])            
         
 
         # self.RANSAC_slope_detection(cont_pic, x_vals, y_vals)
@@ -153,17 +116,13 @@ class ColorThresholdAttempt:
         
         #crop additional space off of the max values
         #figure out how to transform image/homography to overhead view
-        cut_pad = 40
+        cut_pad = 40    
         x_max = max(x_vals) - cut_pad
         x_min = min(x_vals) + cut_pad
         y_max = max(y_vals) - cut_pad
         y_min = min(y_vals) + cut_pad
 
-        ROI = warped_im[y_min:y_max, x_min:x_max]
-        self.preview(ROI)
-        return ROI
-
-        # return x_min, x_max, y_min, y_max
+        return x_min, x_max, y_min, y_max
 
     def RANSAC_slope_detection(self, cont_pic, x_vals, y_vals):
         """ WIP!! compute slopes of boundary detection given image and contour points """
@@ -193,7 +152,7 @@ class ColorThresholdAttempt:
         y2 = int(most[0][0][0]*x2 + most[0][0][1])
         cv2.line(cont_pic,(x1,y1),(x2,y2),(0,0,255),5)
 
-    def crop_image_to_box_region(self, im):
+    def crop_image_to_box_region(self, im, mask=True):
         ''' input raw image, return region of image that has the box inside '''
         #step 1 gaussian blur
         im = cv2.GaussianBlur(im,(7,7), 7)
@@ -203,15 +162,23 @@ class ColorThresholdAttempt:
         # self.preview(background_mask)
 
         #find contours and select the contour with the greatest area
-        contours, hierarchy = cv2.findContours(background_mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+        im2, contours, hierarchy = cv2.findContours(background_mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
 
-        # self.preview(contours)
-
-        # x_min, x_max, y_min, y_max = self.get_boundary_points_from_contour(im, contours)
-        ROI = self.get_boundary_points_from_contour(im, contours)
-        
+        x_min, x_max, y_min, y_max = self.get_boundary_points_from_contour(im2, contours)
+            
         #crop to the sized of the max values on that contour
-        #
+        ROI = im[y_min:y_max,x_min:x_max]
+        
+        if mask:
+            mask = np.zeros(im.shape).astype(im.dtype)
+            cont = sorted(contours, key = cv2.contourArea, reverse = True)
+            cv2.fillPoly(mask, [cont[0]], [255, 255, 255])
+            mask_inverted = cv2.bitwise_not(mask)
+            mask_inverted = mask_inverted[y_min:y_max,x_min:x_max]
+            mask_inverted[mask_inverted[:,:, 0] > 128] = [0, 255, 0]
+            mask = mask[y_min:y_max, x_min:x_max] + mask_inverted
+            ROI = cv2.bitwise_and(ROI, mask)
+            self.preview(ROI)
 
         return ROI
 
@@ -221,14 +188,14 @@ class ColorThresholdAttempt:
         return image of background blacked out to only contain screws and no color mask version"""
 
         green_thresh = self.threshold_color(ROI, self.green_threshold_values)
-        # self.preview(green_thresh)
+        self.preview(green_thresh)
         green_thresh_inverted = cv2.bitwise_not(green_thresh)
         green_thresh_open_close = self.open_close_image(green_thresh_inverted, 4)
         #green_thresh_inverted = morphOps(green_thresh_inverted, 5)
         
-        # self.preview(green_thresh_open_close)
+        self.preview(green_thresh_open_close)
         res = cv2.bitwise_and(ROI,ROI, mask= green_thresh_open_close)
-        #preview(res)
+        self.preview(res)
         return res, green_thresh_open_close
 
     def process_image(self, im):
@@ -237,7 +204,7 @@ class ColorThresholdAttempt:
         return two images - only screws with color and only screws masked
          """
         ROI = self.crop_image_to_box_region(im)
-        only_screws_im, masked_only_screws_im = self.threshold_screw_images(ROI)
+        only_screws_im, masked_only_screws_im= self.threshold_screw_images(ROI)
 
         return only_screws_im, masked_only_screws_im
 
@@ -246,25 +213,25 @@ class ColorThresholdAttempt:
         only_screws_im, masked_only_screws_im = self.process_image(im)
         im2, contours, hierarchy = cv2.findContours(masked_only_screws_im, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
         num_contours = len(contours)
-        # print(num_contours)
+        print(num_contours)
         font = cv2.FONT_HERSHEY_SIMPLEX
         cv2.putText(only_screws_im,'Number of screws:' + str(num_contours),(50,50), font, 1,(255,255,255),2,cv2.LINE_AA)
         
-        # self.preview(only_screws_im)
+        self.preview(only_screws_im)
 
         return num_contours
 
 if __name__ == '__main__':
     attempt = ColorThresholdAttempt()
     # attempt.run()
-    # path = 'bin_images-jpg'
-    path = 'bin_images_video'
-    lis = os.listdir(path)
+    path = 'bin_images-jpg'
     # attempt.process_images_from_folder(path)
-    # im = cv2.imread(path + '/IMG_5051.jpg')
-    im = cv2.imread(path + '/' + lis[7])
-
-    # im = attempt.resize_image(im)
-    im1, im2 = attempt.process_image(im)
-    attempt.preview(im1)
+    for f in os.scandir(path):
+        if not f.is_file():
+            #wtf
+            continue
+        im = cv2.imread(f.path)
+        im = attempt.resize_image(im, 0.25)
+        im1, im2 = attempt.process_image(im)
+        attempt.preview(im2)
     # attempt.count_number_of_screws(im)
