@@ -246,9 +246,11 @@ def count_screws(im):
     im2, contours, hierarchy = cv2.findContours(green_thresh_open_close, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
     num_contours = len(contours)
     print(num_contours)
+# <<<<<<< Updated upstream
     font = cv2.FONT_HERSHEY_SIMPLEX
 #    cv2.putText(res,'Number of screws:' + str(num_contours),(50,50), font, 1,(255,255,255),2,cv2.LINE_AA)
     preview(res)
+<<<<<<< HEAD
 =======
 
 
@@ -271,3 +273,17 @@ lis = os.listdir('bin_images-jpg')
 image = cv2.imread(path + '/' + lis[2])
 count_screws(image)
 >>>>>>> f689d81bce8adfeb71457fd17a74539bbd1b683e
+=======
+# =======
+#     preview(res)
+
+#     return num_contours
+
+
+# path = 'bin_images-jpg'
+# lis = os.listdir('bin_images-jpg')
+# image = cv2.imread(path + '/' + lis[2])
+# print(lis[2])
+# count_screws(image)
+# >>>>>>> Stashed changes
+>>>>>>> 1097cb5c73d6d340e67819288e9a72d6f3e3f154
