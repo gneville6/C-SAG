@@ -2,14 +2,17 @@ from color_threshold_attempt_wrapped import ColorThresholdAttempt
 import os
 import cv2
 
+
 def test_function():
     path = '/home/sean/Images/Test_set/3bolts1big0small/349.jpeg'
+    ColorObj = ColorThresholdAttempt()
+    im = cv2.imread(path)
+    screw_num = ColorObj.count_number_of_screws(im)
+    print(screw_num)
+    # ColorObj.preview(im1)
 
 
-
-
-
-if __name__ == "__main__":
+def run_all_count_screws():
     ColorObj = ColorThresholdAttempt()
 
     rawImageFolderPath = '/home/sean/Images/Test_set'
@@ -25,10 +28,18 @@ if __name__ == "__main__":
             print(f.path)
             im = ColorObj.resize_image(im, 1.00)
 
-            im1 = ColorObj.count_number_of_screws(im)
+            ColorObj.preview(im)
+            num_screws = ColorObj.count_number_of_screws(im)
+            print(num_screws)
 
             # im1 = ColorObj.process_image_just_crop(im)
 
 
 
             # ColorObj.preview(im1)
+
+
+
+if __name__ == "__main__":
+    # test_function()
+    run_all_count_screws()
