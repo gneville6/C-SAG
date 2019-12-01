@@ -19,6 +19,31 @@ from collections import Counter
 from PIL import Image, ImageOps
 
 
+def is_cv2():
+    # if we are using OpenCV 2, then our cv2.__version__ will start
+    # with '2.'
+    return check_opencv_version("2.")
+ 
+def is_cv3():
+    # if we are using OpenCV 3.X, then our cv2.__version__ will start
+    # with '3.'
+    return check_opencv_version("3.")
+ 
+def is_cv4():
+    # if we are using OpenCV 3.X, then our cv2.__version__ will start
+    # with '4.'
+    return check_opencv_version("4.")
+ 
+def check_opencv_version(major, lib=None):
+    # if the supplied library is None, import OpenCV
+    if lib is None:
+        import cv2 as lib
+        
+    # return whether or not the current OpenCV version matches the
+    # major version number
+    return lib.__version__.startswith(major)
+
+
 class ColorThresholdAttempt:
     def __init__(self):
         self.test = 4
@@ -181,7 +206,11 @@ class ColorThresholdAttempt:
         #self.preview(background_mask)
 
         #find contours and select the contour with the greatest area
-        im2, contours, hierarchy = cv2.findContours(background_mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+        if is_cv4():
+            im2 = im
+            contours, hierarchy = cv2.findContours(background_mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+        else:
+            im2, contours, hierarchy = cv2.findContours(background_mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
 
         x_min, x_max, y_min, y_max = self.get_boundary_points_from_contour(im2, contours)
             
@@ -337,13 +366,19 @@ class ColorThresholdAttempt:
     def count_number_of_screws(self, im):
         """ Given unprocessed image, count the number of screws"""
         only_screws_im, masked_only_screws_im = self.process_image(im)
-        im2, contours, hierarchy = cv2.findContours(masked_only_screws_im, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+        
+        if is_cv4():
+            # im2 = im
+            contours, hierarchy = cv2.findContours(masked_only_screws_im, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+        else:
+            im2, contours, hierarchy = cv2.findContours(masked_only_screws_im, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+
         num_contours = len(contours)
         print(num_contours)
         font = cv2.FONT_HERSHEY_SIMPLEX
         cv2.putText(only_screws_im,'Number of screws:' + str(num_contours),(50,50), font, 1,(255,255,255),2,cv2.LINE_AA)
         
-        #self.preview(only_screws_im)
+        self.preview(only_screws_im)
 
         return num_contours
 
