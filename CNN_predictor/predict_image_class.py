@@ -12,6 +12,7 @@ import PIL
 import numpy as np
 from keras.models import load_model
 import matplotlib.pyplot as plt
+import cv2
 
 
 class Predictor():
@@ -52,7 +53,7 @@ class Predictor():
     
     
     def modify_image(self,im):
-        im = im.resize((128,128), resample = 0, box=None)
+        im = cv2.resize(im,(128,128))
         im = np.asarray(im, dtype = 'uint8')
         im = im/255
         im = im.reshape((1,128,128,3))
