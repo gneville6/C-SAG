@@ -19,9 +19,12 @@ while True:
     ret,frame = cap.read()
     
     if ret:
-        
         im = new_attempt.process_image_just_crop(frame)
-        label, label_num, confidence  = new_predictor.predict_image_class(im,raw_image = True, verbose=0)
+        if len(im.shape) == 3:
+            label, label_num, confidence  = new_predictor.predict_image_class(im,raw_image = True, verbose=0)
+        else:
+            label, confidence = "bad image", -1
+            
         im_out = cv2.putText(frame, label + " " + str(confidence), (50,50), cv2.FONT_HERSHEY_SIMPLEX,  
                    1, (255,0,0), 2, cv2.LINE_AA) 
         
