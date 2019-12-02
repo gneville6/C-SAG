@@ -19,6 +19,31 @@ from collections import Counter
 from PIL import Image, ImageOps
 
 
+def is_cv2():
+    # if we are using OpenCV 2, then our cv2.__version__ will start
+    # with '2.'
+    return check_opencv_version("2.")
+ 
+def is_cv3():
+    # if we are using OpenCV 3.X, then our cv2.__version__ will start
+    # with '3.'
+    return check_opencv_version("3.")
+ 
+def is_cv4():
+    # if we are using OpenCV 3.X, then our cv2.__version__ will start
+    # with '4.'
+    return check_opencv_version("4.")
+ 
+def check_opencv_version(major, lib=None):
+    # if the supplied library is None, import OpenCV
+    if lib is None:
+        import cv2 as lib
+        
+    # return whether or not the current OpenCV version matches the
+    # major version number
+    return lib.__version__.startswith(major)
+
+
 class ColorThresholdAttempt:
     def __init__(self):
         self.test = 4
@@ -36,6 +61,8 @@ class ColorThresholdAttempt:
         self.params.minArea = 0
         self.params.maxArea = 2000
         self.minDistBetweenBlobs = 1
+
+        self.threshold_num = 500
 
     def preview(self, im):
         cv2.imshow("preview", im)
@@ -181,7 +208,11 @@ class ColorThresholdAttempt:
         #self.preview(background_mask)
 
         #find contours and select the contour with the greatest area
-        im2, contours, hierarchy = cv2.findContours(background_mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+        if is_cv4():
+            im2 = im
+            contours, hierarchy = cv2.findContours(background_mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+        else:
+            im2, contours, hierarchy = cv2.findContours(background_mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
 
         x_min, x_max, y_min, y_max = self.get_boundary_points_from_contour(im2, contours)
             
@@ -202,6 +233,10 @@ class ColorThresholdAttempt:
         return ROI
 
     def remove_small_blobs(self, image_mask, image):
+
+        # self.preview(image_mask)
+        # self.preview(image)
+
         verbose = 0
 
         size = image.shape
@@ -260,9 +295,10 @@ class ColorThresholdAttempt:
         return image of background blacked out to only contain screws and no color mask version"""
 
         green_thresh = self.threshold_color(ROI, self.green_threshold_values)
-        print(green_thresh.shape)
+        # print(green_thresh.shape)
         #self.preview(green_thresh)
         green_thresh_inverted = cv2.bitwise_not(green_thresh)
+        # self.preview(green_thresh_inverted)
         if self.test == 0:
             green_thresh_open_close = self.open_close_image(green_thresh_inverted, 4)
         elif self.test == 1:
@@ -274,11 +310,20 @@ class ColorThresholdAttempt:
         elif self.test == 4:
             green_thresh_open_close = green_thresh_inverted
         #green_thresh_inverted = morphOps(green_thresh_inverted, 5)
-        #self.preview(green_thresh_open_close)
+        # self.preview(green_thresh_open_close)
 
-        res, green_thresh_open_close = self.remove_small_blobs(green_thresh_open_close, ROI)
-        #self.preview(res)
-        return res, green_thresh_open_close
+        # print(ROI.shape)
+        # print(green_thresh_open_close.shape)
+
+        res2 = cv2.bitwise_and(ROI, ROI, mask=green_thresh_open_close)
+
+        # self.preview(green_thresh_open_close)
+        # self.preview(res2)
+
+        # res, green_thresh_open_close = self.remove_small_blobs(green_thresh_open_close, ROI)
+        # self.preview(res)
+        # return res, green_thresh_open_close
+        return res2, green_thresh_open_close
 
     def process_image(self, im):
         """ given opencv/numpy image, run the processing method 
@@ -288,14 +333,12 @@ class ColorThresholdAttempt:
         ROI = self.crop_image_to_box_region(im)
         #self.preview(ROI)
         only_screws_im, masked_only_screws_im = self.threshold_screw_images(ROI)
-        #self.preview(only_screws_im)
+        # self.preview(masked_only_screws_im)
 
         return only_screws_im, masked_only_screws_im
 
     def process_image_just_crop(self, im, mask=False):
         """ given opencv/numpy image, run the processing method
-
-        return two images - only screws with color and only screws masked
          """
         ROI = self.crop_image_to_box_region(im)
 
@@ -315,15 +358,13 @@ class ColorThresholdAttempt:
 
 
         # self.preview(ROI)
-        #only_screws_im, masked_only_screws_im = self.threshold_screw_images(ROI)
+        # only_screws_im, masked_only_screws_im = self.threshold_screw_images(ROI)
         # self.preview(only_screws_im)
 
         return ROI
 
     def process_image_crop_threshold(self, im):
         """ given opencv/numpy image, run the processing method
-
-        return two images - only screws with color and only screws masked
          """
         ROI = self.crop_image_to_box_region(im)
         ROI = self.threshold_screw_images(ROI)
@@ -337,13 +378,33 @@ class ColorThresholdAttempt:
     def count_number_of_screws(self, im):
         """ Given unprocessed image, count the number of screws"""
         only_screws_im, masked_only_screws_im = self.process_image(im)
-        im2, contours, hierarchy = cv2.findContours(masked_only_screws_im, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
-        num_contours = len(contours)
-        print(num_contours)
+
+        # self.preview(masked_only_screws_im)
+        
+        if is_cv4():
+            # im2 = im
+            contours, hierarchy = cv2.findContours(masked_only_screws_im, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+        else:
+            im2, contours, hierarchy = cv2.findContours(masked_only_screws_im, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+
+        num_contours = 0
+        # area = []
+        for i in range(len(contours)):
+            area_image = cv2.contourArea(contours[i])
+            if area_image >= self.threshold_num:
+                num_contours += 1
+            # area.append(area_image)
+            
+        # cont = sorted(contours, key = cv2.contourArea, reverse = True)
+        # print(area)
+
+
+        # num_contours = len(contours)
+        # print(num_contours)
         font = cv2.FONT_HERSHEY_SIMPLEX
         cv2.putText(only_screws_im,'Number of screws:' + str(num_contours),(50,50), font, 1,(255,255,255),2,cv2.LINE_AA)
         
-        #self.preview(only_screws_im)
+        # self.preview(only_screws_im)
 
         return num_contours
 
