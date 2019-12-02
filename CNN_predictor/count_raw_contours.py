@@ -1,7 +1,7 @@
 from color_threshold_attempt_wrapped import ColorThresholdAttempt
 import os
 import cv2
-
+import functools
 
 def test_function():
     path = '/home/sean/Images/Test_set/3bolts1big0small/349.jpeg'
@@ -11,17 +11,35 @@ def test_function():
     print(screw_num)
     # ColorObj.preview(im1)
 
+def get_total_number_screws(input_string):
+    '''given folder name return total number of screws '''
+
+    # filter string to only contain numbers
+    res = ''.join(filter(lambda x: x.isdigit(), input_string))
+
+    # sum digits in string
+    total_num = functools.reduce(lambda a,b: int(a) + int(b), res)
+
+    return total_num
 
 def run_all_count_screws():
     ColorObj = ColorThresholdAttempt()
 
     rawImageFolderPath = '/home/sean/Images/Test_set'
 
+    confusion_dict = {}
+
     for j in os.scandir(rawImageFolderPath):
         path1 = j.path
-        print(path1)
+        # print(path1)
 
         count_dict = {}
+        folder_name = j.name
+        real_num_screws = get_total_number_screws(folder_name)
+        # print(a)
+
+        count_correct = 0
+        count_incorrect = 0
 
         for f in os.scandir(path1):
             if not f.is_file():
@@ -39,8 +57,15 @@ def run_all_count_screws():
             else:
                 count_dict[num_screws] = 1
 
-        
-        print(count_dict)
+            if num_screws == real_num_screws:
+                count_correct += 1
+            else:
+                count_incorrect += 1
+
+        confusion_dict[folder_name] = [count_correct, count_incorrect]
+        print(confusion_dict)
+    return confusion_dict
+        # print(count_dict)
 
             # im1 = ColorObj.process_image_just_crop(im)
 
