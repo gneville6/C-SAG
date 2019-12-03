@@ -126,7 +126,7 @@
 										<span class="heading-meta">About the Problem?</span>
 										<h2 class="colorlib-heading">Problem Statement</h2>
 										<p>
-											A team of two robots (A and B) is attempting to perform a set of tasks in parallel. Each task involves multiple actions such as move to this position, pick up this item, etc. If robot A fails a specific task/action or is significantly slower at performing the task/action than expected (possibly due to errors), how can this failure or error be detected and resolved so that the time taken to complete all of the tasks is still optimized? In the base case, a failure will go unnoticed and the set of tasks for robot A will be compromised. In the case of a robot being slower than expected this could result in missing deadlines or hold up future work that depends on the results of this work. If the error or slowdown is caught in a sufficient amount of time, the error or slowdown can be corrected or mitigated and the set of tasks performed by robot A will still yield positive results.
+											A team of two robots (A and B) is attempting to perform a set of tasks in parallel. Each task involves multiple actions such as move to this position, pick up this item, etc. If robot A fails a specific task/action or is significantly slower at performing the task/action than expected (possibly due to errors), how can this failure or error be detected and resolved so that the time taken to complete all of the tasks is still optimized? In the base case, a failure will go unnoticed and the set of tasks for robot A will be compromised. In the case of a robot being slower than expected this could result in missing deadlines or hold up future work that depends on the results of this work. If the error or slowdown is caught in a sufficient amount of time, the error or slowdown can be corrected or mitigated and the set of tasks performed by robot A will still yield positive results. Our goal for this project is to build out the vision systems needed to recognize a robot is erroring in a simple pick and place task.
 										</p>
 										<p></p>
 									</div>
@@ -150,8 +150,7 @@
 										<span class="heading-meta">Goals</span>
 										<h2 class="colorlib-heading">Abstract</h2>
 										<p>
-										Multi-agent systems in the real world require collaboration between robotic agents in order to effectively accomplish tasks. However, robotic errors can hamper the performance of a multi-agent system. Our hope is to provide a method that allows robots to cross-check the progress of other agents and plan around these failures to ensure the team's successful completion of a set of tasks. In order to test this system, we propose a simple Pick-and-Place task where a team of robots works to place different size gears into a pegboard in specific locations. We plan to train a convolutional neural net to do the classification of the various gears that the robots will interact with. We also plan to use more classical vision techniques including color filtering, contour localization, homographies, template matching, ransac and sift to locate holes to place parts into. Finally, we plan to use a variant of the framework found in [3] to detect the configuration of the robot in order to determine errors in the robot’s motion. We currently are still implementing some parts of this proposed system and are therefore unable to show results at this time. However, we hope to be able to show that robots can use visual clues to recognize the errors of other agents and effectively replan.
-										</p>
+										Multi-agent systems in the real world require collaboration between robotic agents in order to effectively accomplish tasks. However, robotic errors can hamper the performance of a multi-agent system. Our hope is to provide a method that allows robots to cross-check the progress of other agents and plan around these failures to ensure the team's successful completion of a set of tasks. For this paper, we focus specifically on the computer vision part of a task where another robot has attempted to pick and place gears and bolts into a bin. The supervising robot must detect what was placed into the bin and determine if the other robot has made an error such as putting the wrong part in, putting too many or too few of a specific part in, or stopped moving entirely. For this task, many approaches were taken including a convolutional neural network and several more classical vision techniques. Also, the supervising robot must be capable of knowing if the robot has errored out and is no longer working to complete the task. In order to recognize this task we investigated two forms of motion detection to determine if the robot has moved over some time period.</p>
 										<p></p>
 									</div>
 								</div>
@@ -171,11 +170,35 @@
 							<div class="row row-bottom-padded-sm animate-box" data-animate-effect="fadeInLeft">
 								<div class="col-md-12">
 									<div class="about-desc">
-										<span class="heading-meta">Just a Sample</span>
+										<span class="heading-meta">Just a Sample (Scroll over for more information)</span>
 										<h2 class="colorlib-heading">Teaser</h2>
-										<p>
-											Under Construction
-										</p>
+										<div class="row">
+												<div class="col-md-6 animate-box" data-animate-effect="fadeInLeft">
+													<div class="project" style="background-image: url(images/teaser1.png);">
+														<div class="desc">
+															<div class="con">
+																<h3><a href="#" data-nav-section="home">Robot Task</a></h3>
+																<span>Robot performing pick and place example task.
+																	Our algorithms are deigned to detect errors that a robot might face performing this task.
+																	Our error checking algorithms are designed to check the number of parts in the bucket and whether or not the robot is still working on the goal (is moving).
+																	If the robot stops moving or does not have enough parts in the bin the system will detect an error.
+																	In the future we hope to implement this on a team of robots and adjust the robots plans according to sensed errors.
+																</span>
+															</div>
+														</div>
+													</div>
+												</div>
+												<div class="col-md-6 animate-box" data-animate-effect="fadeInRight">
+													<div class="project" style="background-image: url(images/teaser2.png);">
+														<div class="desc">
+															<div class="con">
+																<h3><a href="#" data-nav-section="home">Bin </a></h3>
+																<span>A picture of the bin that the robot is pick parts from</span>
+															</div>
+														</div>
+													</div>
+												</div>
+											</div>
 										<p></p>
 									</div>
 								</div>
@@ -198,14 +221,13 @@
 										<span class="heading-meta">Intro to Our Work</span>
 										<h2 class="colorlib-heading">Introduction</h2>
 										<p>
-
-The goal of this project is to enable robots to monitor each other periodically using computer vision to mitigate the errors that may occur. For example, robot A, while working on completing its own set of tasks, can glance over and observe robot B operating in its workspace and determine if everything is going smoothly or if intervention of some type is needed.
-</p>
-<p>
-The experimental setup we have created includes two Fetch Mobile Manipulators. Each will operate in its own space and will have no physical interaction with the other, but will be facing each other such that they can visually observe one another. (Teaser Figure) Both will have knowledge of its own set of tasks and the global set of tasks. The task we have chosen is a Pick-and-Place task where we move screws and gears from one bin to the other. Both robots will be conducting the same task separately and monitor the other robot. 
-</p>
-<p>
-Our approach is unique because existing approaches to monitoring faults in multi-robot systems [4, 5] do not use vision. By utilizing vision, our system is not dependent on outside factors such as the network connection or internal sensors to influence whether the robots will be able to communicate with each other. Therefore teammates are able to take over tasks and complete overall objectives. 
+										The goal of this project is to enable robots to monitor each other periodically using computer vision to mitigate the errors that may occur. For example, robot A, while working on completing its own set of tasks, can glance over and observe robot B operating in its workspace and determine if everything is going smoothly or if an intervention of some type is needed.
+										</p>
+										<p>
+										Our approach is different from most existing approaches to monitoring faults in multi-robot systems [4, 5] as most current approaches do not use vision. By utilizing vision, our system is not dependent on outside factors such as the network connection or internal sensors to influence whether the robots will be able to communicate with each other. Therefore teammates are able to take over tasks and complete overall objectives.
+										</p>
+										<p>
+										For this project, we are focusing on the computer vision part of the supervising robot’s error detection. This involves determining what the other robot has already placed in the bin and knowing whether the other robot has placed too little or too much of each object. It also uses a motion image to determine if the other robot has stopped moving.
 
 										</p>
 										<p></p>
@@ -230,27 +252,44 @@ Our approach is unique because existing approaches to monitoring faults in multi
 										<span class="heading-meta">How we did it</span>
 										<h2 class="colorlib-heading">Approach</h2>
 										<p>
-
-There are two different high level tasks required to test and implement a solution. The first is implementing the robot tasks while the second is the vision system for error detection. 
-</p>
-<p>
-In order to build out the Pick-and-Place task that we will be testing with, we are bootstrapping the task from the GT-Rail FetchIt challenge codebase. This codebase has a hierarchical task action layout that allows for quicker extensions of robot task. Updating this existing code to perform new tasks and allow the robots to work simultaneously. 
-The existing library is able to pick the commanded part out of the bucket, however, we will need to implement new tasks to place the screws or gears in the appropriate holes in the peg board. To accomplish this goal, we will orient the part in the air and position over the hole. Then have the robot move in the Z direction and release the grip to drop it in the hole.
-</p>
-<p>
-For the vision portion of the project, different approaches were used to identify the different types of errors. Here we will focus on two errors: a robot misplacing a screw into a bin and a robot malfunctioning and stopping.
-</p>
-<p>
-Error 1: Robot misplacing a screw
-In this error, one of the robots misplaces an item in its output bin. To detect this error, the checker robot checks the contents of the output box. For this implementation, we utilized OpenCV functions to find the contour of the box, crop the image to only include the box, apply a mask for the screws, dilate and erode the mask, and finally count the number of screw contours. One major downside of this method is that it has been subject to false positives when we have glare from ambient lighting. We are currently investigating methods to filter the glare such as bright spot color filtering. Additionally, there have been false positives due to objects in the background of the image. We are working on removing the background once the initial contour of the box has been found. 
-Given the shortcomings of the traditional methods, we are also pursuing a parallel strategy of utilizing convolutional neural networks to detect the gears and screws in the box. We have already collected over 20 minutes of varied video data while shaking the box with different number of parts in it. This data will be used to help train the model. The initial plan for the model is to have two convolutional layers with max pooling and a single hidden layer implemented through the Keras library with Tensorflow as the backend. As this develops we will likely make adjustments to the model and do hyperparameter tuning. 
-As an additional layer of robustness, for both the traditional and CNN approach, we are working on using homography to transform the camera perspective to a perfect overhead view. It will add an additional level of consistency that should ideally improve both methods. Initial attempts have been through RANSAC methods for finding the edges and corners of the boxes. Results have been promising on a small subset of the images; however, this needs to be proven on a larger set of images to show that it generalizes effectively. 
-</p>
-<p>
-Error 2: Robot malfunctions and stops moving
-During this error, one of the robots stops moving. To detect this error, one robot will occasionally observe the other robot. Each of their joints has a gray circle and each arm segment contains a blue band. By looking at the relations between the bands and using a homography to always project them into the same plane, we can determine if the robot is in the same configuration as the last time it was observed. If the robot is in the same configuration for a few observations then it has probably stopped moving and decision needs to be made about how to progress.
+										Several different approaches were used by the supervisory robot to determine what objects were placed in a bin by another robot. These include histogram thresholding, contour counting, probability distributions, and a convolutional neural network. Several methods were also used for motion detection (MHI and gaussian mixture separation model).
+											Finally a dataset of labeled images was created to train our learning algorithms on. This dataset had images of a variety of orientations and scales of various configurations of the bin and parts.
 										</p>
+										<div class="col-md-6 animate-box" data-animate-effect="fadeInRight">
+													<div class="project" style="background-image: url(images/teaser2.png);">
+														<div class="desc">
+															<div class="con">
+																<h3><a href="#" data-nav-section="home">Example image from dataset </a></h3>
+																<span>A picture of the bin that the robot is pick parts from</span>
+															</div>
+														</div>
+													</div>
+										</div>
+										<h4>Data Collection</h4>
+										<p>To aid in the error detection process, data was manually collected in 25 different specific classes. The classes were based on the count of each object in the bin. For example the figure above shows 1 large gear in red, 1 small gear in blue and 2 bolts in grey, therefore the label for this image is “2bolts1big1small.” To collect the data, we recorded video from the Fetch robot’s camera while shaking the green bin to vary the position of the gears and bolts. There was approximately 1 hour of video recorded in total. After converting the video into individual frames, there were approximately 10,000 images in the total dataset with approximately 400 images per class. The advantage of this method is that we can label each image from a specific video with a certain class which minimizes the amount of image labeling required. One note on the classes, the ultimate goal is to determine if the bin has the parts necessary to build a full kit. By initially splitting the data into 25 classes, the option to consolidate into small groups of classes remained such as combining all the images with the large gear to help create a classifier to check for the large gear. </p>
+
+
+										<h4>Histogram Thresholding</h4>
+										<p>The first and simplest of the approaches we tested for classifying the items in the bin was a thresholding based approach in this approach we would threshold based on the green of the box and locate the contour of the outside of the box using opencv find contour function. After finding the contour we would remove all of the data outside of the region of the box by setting the pixel values to black. After doing this we would threshold away the green of the box and perform a slight erosion and dilation  on the mask to remove any small blobs and to prevent any of the gears/bolts from being removed from the image. Once this was done we would have an image that only contained the gears/bolts. Finally we would threshold themimage containing only the gear/bolts on each of the colors: red, blue and gray and count the numbers of pixels of each color in the image. Using these histograms of colors we would detect the number of gears/bolts by setting ranges on the number of pixels. The exact threshold values were hand tuned to maximize the performance of the classifier on the dataset. This method was tested by measuring its performance on the dataset collected above and qualitatively by running the classifier on webcam images while moving and changing the number of objects in the bin.</p>
+
+
+										<h4>Contour Counting</h4>
+										<p>In this method, images were cropped to the boundary of the box, thresholded on green to cut out the back of the box, dilated and eroded to reduce noise, and finally run through a contour detection on the masked image. Finally, the total number of contours detected larger than a set area was used to predict how many screws/bolts were in the box. </p>
+
+
+										<h4>Probability Distributions</h4>
+										<p>In this method, images were cropped to the boundary of the box. A percentage of the box that contained each of the three types of objects was computed. Classical computer vision methods, including color thresholding, image segmentation, and edge detection, were used to determine which pixels belonged to each type of object. These three percentages were then computed for each of the labeled images in the dataset to create probability distributions for each of the classes. This classifier uses these probability distributions to predict a class for test images based on the percentage of the box that is each of the three types of objects. </p>
+
+
+										<h4>Deep Learning</h4>
 										<p></p>
+
+
+										<h4>Motion Detection</h4>
+										<p>In order to detect if the robot has errored and is no longer moving a motion detection system needed to be implemented. In order to do this we tried two different approaches. The first approach was to use a motion history image to measure the change in the frame over time. The second method was to use a motion detection algorithm MOG2 which uses gaussian mixtures to remove the background. Both of these methods were tested empirically using streams of video from a webcam.
+										</p>
+
+
 									</div>
 								</div>
 							</div>
@@ -273,12 +312,12 @@ During this error, one of the robots stops moving. To detect this error, one rob
 							<span class="colorlib-counter-label">+ Lines of Code</span>
 						</div>
 						<div class="col-md-3 text-center animate-box">
-							<span class="colorlib-counter js-counter" data-from="0" data-to="456" data-speed="5000" data-refresh-interval="50"></span>
+							<span class="colorlib-counter js-counter" data-from="0" data-to="700" data-speed="5000" data-refresh-interval="50"></span>
 							<span class="colorlib-counter-label">Cups of coffee</span>
 						</div>
 						<div class="col-md-3 text-center animate-box">
-							<span class="colorlib-counter js-counter" data-from="0" data-to="6" data-speed="5000" data-refresh-interval="50"></span>
-							<span class="colorlib-counter-label">Weeks to Due</span>
+							<span class="colorlib-counter js-counter" data-from="0" data-to="7" data-speed="5000" data-refresh-interval="50"></span>
+							<span class="colorlib-counter-label">Weeks worked on</span>
 						</div>
 						<div class="col-md-3 text-center animate-box">
 							<span class="colorlib-counter js-counter" data-from="0" data-to="4" data-speed="5000" data-refresh-interval="50"></span>
@@ -298,19 +337,9 @@ During this error, one of the robots stops moving. To detect this error, one rob
 										<span class="heading-meta">Experiments Run</span>
 										<h2 class="colorlib-heading">Experiment and Results</h2>
 										<p>
-											The experiment consists of using two Fetch Mobile Manipulators. Each will operate in its own space and will have no physical interaction with the other, but will be in close proximity (close enough to visually obverse one another). Both will have knowledge of its own tasks and the global set of tasks. We will be using the DERAIL library to have the robot attempt the tasks. Additional actions will be added to cause “errors/slowdowns” and to visually observe the other robot and detect any errors or significant slowdowns.
-</p>
-<p>
-	More specifically, we will run a Pick-and-Place task in order to evaluate the system. In the task, robot A will be performing a Pick-and-Place task in which the robot will be tasked with moving screws and gears from an open box into a storage pegboard. During the task robot A will also be tasked with watching robot B, robot A will need to visually sense when robot B is erroring and notify the human of all errors made by robot B.
-</p>
-<p>
-We will run a set of 20 experiments where each experiment robot B will be programmed to randomly execute in one of 3 modes. In mode 1, robot B will purposefully fault with error 1. In mode 2, robot B will purposefully fault in error 2. In mode 3, robot B will operate normally.
-Robot B will then have a "checking task" added to his defualt task loop where it will look to see if Robot B has faulted. We will measure the precision, recall and accuracy ability of robot A to identify the possible operating mode/errors of robot B.  
- 									</p>
-<!--										<p>
-											We will simulate many different errors on one of the Fetch Robots and test if the other robot completes the task by completing more work or helping the other robot. Failures can include a complete malfunction (robot stops working), a slow down in the time it takes to complete a task or an error in localization. We expect the experiments to reveal if our system performs correctly and our key metric is whether all work gets finished regardless. Uncertainties at this point include the extent of the errors and the amount of information that will be communicated between the two robots.
-
+										Under Construction
 										</p>
+<!--
 -->
 									<p></p>
 									</div>
@@ -339,7 +368,7 @@ Robot B will then have a "checking task" added to his defualt task loop where it
 									<div class="panel panel-default">
 									    <div class="panel-heading" role="tab" id="headingOne">
 									        <h4 class="panel-title">
-									            <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">Result 1 </a>
+									            <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">Data Collection</a>
 
 									        </h4>
 									    </div>
@@ -347,23 +376,9 @@ Robot B will then have a "checking task" added to his defualt task loop where it
 									         <div class="panel-body">
 									            <div class="row">
 										      		<div class="col-md-6">
-										      		<h4>Results 1 </h4>
-										      			<p>
-										Since the systems needed to accomplish the goal are still being worked on, we are unable to show clear quantitative results. However, we are able to lay out a clear plan of the metrics that we wish to collect and how we hope to analyze our data.
-</p>
-<p>
-In order to test our CNN classifier, we are currently in the process of collecting a large dataset of 100’s of pictures of each of the gears and bolts discussed in the experiment section. These pictures contain a variety of combinations of each of these parts in a variety of positions and orientations. Once this dataset is collected we hope to use 80% of it for training and save the last 20% to be used as test data. From this test data, we hope to be able to show several interesting metrics such as recall and precision for each of the parts as well as a full confusion matrix for all of the parts.
-</p>
-<p>
-In order to test our robot configuration estimator, we are planning on running a test to compare the robots’ known joint position in a variety of configurations to those calculated by our robot configuration estimator. Using this we hope to calculate the average error of our system compared to the ground truth.
-</p>
-<p>
-In order to test our item placement visual system, we hope to be able to perform several test placements and show the accuracy of the system.
-Finally, in order to evaluate the system as a whole, we will be running the Pick-and-Place task described above.  In this test, we will evaluate the performance of robot A by how accurately it is at completing its task and how accurately it can sense robot B errors.
-</p>
-		
-
-														
+										      		<h4>Data Collection</h4>
+										      			<p> Hello
+														</p>
 										      		</div>
 
 										      	</div>
@@ -373,13 +388,13 @@ Finally, in order to evaluate the system as a whole, we will be running the Pick
 									<div class="panel panel-default">
 									    <div class="panel-heading" role="tab" id="headingTwo">
 									        <h4 class="panel-title">
-									            <a class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">Results 2
+									            <a class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">Histogram Thresholding
 									            </a>
 									        </h4>
 									    </div>
 									    <div id="collapseTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo">
 									        <div class="panel-body">
-									        <h4>Results 2 </h4>
+									        <h4>Histogram Thresholding</h4>
 									            <p>
 													Under Construction
                                                            </p></p>
@@ -389,13 +404,13 @@ Finally, in order to evaluate the system as a whole, we will be running the Pick
 									<div class="panel panel-default">
 									    <div class="panel-heading" role="tab" id="headingThree">
 									        <h4 class="panel-title">
-									            <a class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseThree" aria-expanded="false" aria-controls="collapseThree">Results 3
+									            <a class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseThree" aria-expanded="false" aria-controls="collapseThree">Contour Counting
 									            </a>
 									        </h4>
 									    </div>
 									    <div id="collapseThree" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingThree">
 									            <div class="panel-body">
-									            <h4>Results 3 </h4>
+									            <h4>Contour Counting</h4>
 									            <p>
 													Under Construction
 												</p>
@@ -406,19 +421,54 @@ Finally, in order to evaluate the system as a whole, we will be running the Pick
 									<div class="panel panel-default">
 									    <div class="panel-heading" role="tab" id="headingFour">
 									        <h4 class="panel-title">
-									            <a class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseFour" aria-expanded="false" aria-controls="collapseFour"> Results 4
+									            <a class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseFour" aria-expanded="false" aria-controls="collapseFour"> Under Construction
 									            </a>
 									        </h4>
 									    </div>
 									    <div id="collapseFour" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingFour">
 									        <div class="panel-body">
-									        <h4>Results 4 </h4>
+									        <h4>Probability Distributions </h4>
 									            <p>
 													Under Construction
 												</p>
 									        </div>
 									    </div>
 									</div>
+
+									<div class="panel panel-default">
+									    <div class="panel-heading" role="tab" id="headingFour">
+									        <h4 class="panel-title">
+									            <a class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseFour" aria-expanded="false" aria-controls="collapseFour">Deep Learning
+									            </a>
+									        </h4>
+									    </div>
+									    <div id="collapseFour" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingFour">
+									        <div class="panel-body">
+									        <h4>Deep Learning</h4>
+									            <p>
+													Under Construction
+												</p>
+									        </div>
+									    </div>
+									</div>
+
+									<div class="panel panel-default">
+									    <div class="panel-heading" role="tab" id="headingFour">
+									        <h4 class="panel-title">
+									            <a class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseFour" aria-expanded="false" aria-controls="collapseFour">Motion Detection
+									            </a>
+									        </h4>
+									    </div>
+									    <div id="collapseFour" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingFour">
+									        <div class="panel-body">
+									        <h4>Motion Detection</h4>
+									            <p>
+													Under Construction
+												</p>
+									        </div>
+									    </div>
+									</div>
+
 								</div>
 							</div>
 						</div>
@@ -463,6 +513,123 @@ Finally, in order to evaluate the system as a whole, we will be running the Pick
 							</div>
 						</div>
 					</div>
+					<h4>Histogram Thresholding</h4>
+					<div class="row">
+						<div class="col-md-6 animate-box" data-animate-effect="fadeInLeft">
+							<div class="project" style="background-image: url(images/two_fetch.jpg);">
+								<div class="desc">
+									<div class="con">
+										<h3><a href="#" data-nav-section="home">Picture 1</a></h3>
+										<span>Comment 1</span>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="col-md-6 animate-box" data-animate-effect="fadeInRight">
+							<div class="project" style="background-image: url(images/comp_vis.jpg);">
+								<div class="desc">
+									<div class="con">
+										<h3><a href="#" data-nav-section="home">Picture 2 </a></h3>
+										<span>Comment 2</span>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<h4>Contour Counting</h4>
+					<div class="row">
+						<div class="col-md-6 animate-box" data-animate-effect="fadeInLeft">
+							<div class="project" style="background-image: url(images/two_fetch.jpg);">
+								<div class="desc">
+									<div class="con">
+										<h3><a href="#" data-nav-section="home">Picture 1</a></h3>
+										<span>Comment 1</span>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="col-md-6 animate-box" data-animate-effect="fadeInRight">
+							<div class="project" style="background-image: url(images/comp_vis.jpg);">
+								<div class="desc">
+									<div class="con">
+										<h3><a href="#" data-nav-section="home">Picture 2 </a></h3>
+										<span>Comment 2</span>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<h4>Probability Distributions</h4>
+					<div class="row">
+						<div class="col-md-6 animate-box" data-animate-effect="fadeInLeft">
+							<div class="project" style="background-image: url(images/two_fetch.jpg);">
+								<div class="desc">
+									<div class="con">
+										<h3><a href="#" data-nav-section="home">Picture 1</a></h3>
+										<span>Comment 1</span>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="col-md-6 animate-box" data-animate-effect="fadeInRight">
+							<div class="project" style="background-image: url(images/comp_vis.jpg);">
+								<div class="desc">
+									<div class="con">
+										<h3><a href="#" data-nav-section="home">Picture 2 </a></h3>
+										<span>Comment 2</span>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<h4>Deep Learning</h4>
+					<div class="row">
+						<div class="col-md-6 animate-box" data-animate-effect="fadeInLeft">
+							<div class="project" style="background-image: url(images/two_fetch.jpg);">
+								<div class="desc">
+									<div class="con">
+										<h3><a href="#" data-nav-section="home">Picture 1</a></h3>
+										<span>Comment 1</span>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="col-md-6 animate-box" data-animate-effect="fadeInRight">
+							<div class="project" style="background-image: url(images/comp_vis.jpg);">
+								<div class="desc">
+									<div class="con">
+										<h3><a href="#" data-nav-section="home">Picture 2 </a></h3>
+										<span>Comment 2</span>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<h4>Motion Detection</h4>
+					<div class="row">
+						<div class="col-md-6 animate-box" data-animate-effect="fadeInLeft">
+							<div class="project" style="background-image: url(images/two_fetch.jpg);">
+								<div class="desc">
+									<div class="con">
+										<h3><a href="#" data-nav-section="home">Picture 1</a></h3>
+										<span>Comment 1</span>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="col-md-6 animate-box" data-animate-effect="fadeInRight">
+							<div class="project" style="background-image: url(images/comp_vis.jpg);">
+								<div class="desc">
+									<div class="con">
+										<h3><a href="#" data-nav-section="home">Picture 2 </a></h3>
+										<span>Comment 2</span>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+
+
 				</div>
 			</section>
 
@@ -499,7 +666,13 @@ Finally, in order to evaluate the system as a whole, we will be running the Pick
 										<span class="heading-meta">Whats Next?</span>
 										<h2 class="colorlib-heading">Future Work</h2>
 										<p>
-											Currently Under Construction
+											The results from several of the methods we tried for classify the parts performed poorly (multi-class CNN, binary CNN, and contour counting). We believe that these methods did not perform as well as expected to the size and quality of our data set. The images were too similar and far too few to effectively learn how to count the parts in the bin. Two of the methods that we tried (probabilistic methods and thresholding) did seem to give pretty good results on counting the parts in the bin.
+										</p>
+										<p>
+											Several further improvements could be made to increase the performance of our classifiers. Improving the dataset to remove blurry or images with occlusion and expand the number of images for each class. These improvements to class we believe would improve the performance of the CNN as well as allow us to further tune the classical methods described above.
+										</p>
+										<p>
+											Also in future work we hope to implement these systems on teams of robots. Using these methods we could find which actions cause errors most often and modify the action space. Once modified this new action space could be useful in helping develop a dynamic planning algorithm. Also, if agents are capable of recognizing the errors of other robots in a cluster this information could be used to develop algorithms for decentralized cluster behaviors. Finally work like this could be used to develop error recovery strategies that can allow for autonomous correction of errors that have already occurred.
 										</p>
 										<p></p>
 									</div>
@@ -522,19 +695,18 @@ Finally, in order to evaluate the system as a whole, we will be running the Pick
 										<h2 class="colorlib-heading">References</h2>
 										<p>
 											[1] Chollet, François. “Keras.” Keras, GitHub, 2015, GitHub.
-</p>
-<p> 
-[2] Banerjee, Siddhartha, et al. "Taking Recoveries to Task: Recovery-Driven Development for Recipe-based Robot Tasks."
-</p>
-<p>
-[3] Ortenzi, Valerio et al. “Vision-Based Framework to Estimate Robot Configuration and Kinematic Constraints.” IEEE/ASME Transactions on Mechatronics 23 (2018): 2402-2412.
-</p>
-<p>
-[4] X. Li and L. E. Parker, "Sensor Analysis for Fault Detection in Tightly-Coupled Multi-Robot Team Tasks," Proceedings 2007 IEEE International Conference on Robotics and Automation, Roma, 2007, pp. 3269-3276.
-</p>
-<p>
-[5] E. Khalastchi and M. Kalech, “Fault Detection and Diagnosis in Multi-Robot Systems: A Survey,” Sensors, vol. 19, no. 18, 2019.
-
+										</p>
+										<p>
+										[2] Banerjee, Siddhartha, et al. "Taking Recoveries to Task: Recovery-Driven Development for Recipe-based Robot Tasks."
+										</p>
+										<p>
+										[3] Ortenzi, Valerio et al. “Vision-Based Framework to Estimate Robot Configuration and Kinematic Constraints.” IEEE/ASME Transactions on Mechatronics 23 (2018): 2402-2412.
+										</p>
+										<p>
+										[4] X. Li and L. E. Parker, "Sensor Analysis for Fault Detection in Tightly-Coupled Multi-Robot Team Tasks," Proceedings 2007 IEEE International Conference on Robotics and Automation, Roma, 2007, pp. 3269-3276.
+										</p>
+										<p>
+										[5] E. Khalastchi and M. Kalech, “Fault Detection and Diagnosis in Multi-Robot Systems: A Survey,” Sensors, vol. 19, no. 18, 2019.
 										</p>
 										<p></p>
 									</div>
@@ -556,15 +728,16 @@ Finally, in order to evaluate the system as a whole, we will be running the Pick
 										<span class="heading-meta">Who are We?</span>
 										<h2 class="colorlib-heading">Team</h2>
 										<p>
-											Andrew "Da big BICEPTS" Messing
+											Andrew Messing,
 										</p>
-										<p>	 
-										Glen "trivia boss" Neville, 
-</p>
-<p>
-Carter "money time" Price 
-</p>
-<p> Sean "YEEEEHAWW" Ye
+										<p>
+											Glen Neville,
+										</p>
+										<p>
+											Carter Price,
+										</p>
+										<p>
+											Sean Ye
 										</p>
 										<p></p>
 									</div>
