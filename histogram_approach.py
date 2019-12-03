@@ -19,53 +19,26 @@ from collections import Counter
 from PIL import Image, ImageOps
 
 
+
 class Histogram:
     def __init__(self):
         self.test = 4
         self.blue_threshold_values = (np.array([95, 80, 80]), np.array([150, 255, 255]))  # lower values, upper values
-        self.red_threshold_values = (np.array([150, 160, 70]), np.array([255, 255, 255]))  # lower values, upper values
+        self.red_threshold_values = (np.array([150,160,70]), np.array([255,255,255]))  # lower values, upper values
         self.red_threshold_values2 = (np.array([0, 160, 100]), np.array([12, 255, 255]))
-        self.green_threshold_values = (np.array([40, 1, 1]), np.array([90, 255, 255]))  # lower values, upper values
-        self.white_threshold_values = (np.array([0, 0, 0]), np.array([180, 200, 200]))
-        # self.gray_threshold_values = (np.array([0, 5, 100]), np.array([255, 40, 170]))
+        self.green_threshold_values = (np.array([40, 0, 0]), np.array([130, 255, 255]))  # lower values, upper values
+        self.gray_threshold_values = (np.array([0, 0, 90]), np.array([255, 50, 250]))
+        #self.gray_threshold_values = (np.array([0, 5, 100]), np.array([255, 40, 170]))
 
         self.params = cv2.SimpleBlobDetector_Params()
 
-
-
-        # Setup SimpleBlobDetector parameters.
-        params = cv2.SimpleBlobDetector_Params()
-
-        params.minDistBetweenBlobs = 0
-        # Change thresholds
-        params.minThreshold = 0;
-        params.maxThreshold = 200;
-
         # Filter by Area.
-        params.filterByArea = True
-        params.minArea = 100
-        params.maxArea = 6000
-
-        # Filter by Circularity
-        params.filterByCircularity = False
-        params.minCircularity = 0.1
-
-        # Filter by Convexity
-        params.filterByConvexity = False
-        params.minConvexity = 0.87
-
-        # Filter by Inertia
-        params.filterByInertia = True
-        params.minInertiaRatio = 0.01
-        params.maxInertiaRatio = 0.3
-
-        # Create a detector with the parameters
-        ver = (cv2.__version__).split('.')
-        if int(ver[0]) < 3:
-            self.detector = cv2.SimpleBlobDetector(params)
-        else:
-            self.detector = cv2.SimpleBlobDetector_create(params)
-
+        self.params.filterByArea = True
+        self.params.filterByInertia = False
+        self.params.filterByConvexity = False
+        self.params.minArea = 0
+        self.params.maxArea = 2000
+        self.minDistBetweenBlobs = 1
 
     def preview(self, im):
         cv2.imshow("preview", im)
@@ -90,6 +63,7 @@ class Histogram:
         # self.preview(im)
         # self.preview(mask)
         return mask
+
 
     def resize_image(self, im, scale):
         """
@@ -165,6 +139,8 @@ class Histogram:
 
         return x_min, x_max, y_min, y_max
 
+
+
     def crop_image_to_box_region(self, im, mask=True):
         ''' input raw image, return region of image that has the box inside '''
         # step 1 gaussian blur
@@ -179,6 +155,7 @@ class Histogram:
         im2, contours, hierarchy = cv2.findContours(background_mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
         if len(contours) > 0:
             x_min, x_max, y_min, y_max = self.get_boundary_points_from_contour(im2, contours)
+            print(contours[0])
             # crop to the sized of the max values on that contour
             ROI = im[y_min:y_max, x_min:x_max]
 
@@ -195,6 +172,8 @@ class Histogram:
         else:
             ROI = im
         return ROI
+
+
 
     def process_image(self, im):
         """ given opencv/numpy image, run the processing method
@@ -267,9 +246,10 @@ class Histogram:
 
     def threshold_hist(self, colorHist):
         print(colorHist)
-        # threshold = [410000, 508755, 260310, 1203600,503600] 937380
-        threshold = [410000, 708755, 500310, 11503600, 700000, 200000]
-        classified = [0, 0, 0]
+        #threshold = [410000, 508755, 260310, 1203600,503600] 937380
+        threshold = [410000, 658755, 500310, 1203600, 503600]
+        classified = [0,0,0]
+
         if colorHist[1] > threshold[0]:
             classified[1] = 1
         if colorHist[0] > threshold[1]:
@@ -277,12 +257,11 @@ class Histogram:
         elif colorHist[0] > threshold[2]:
             classified[0] = 1
         if colorHist[2] > threshold[3]:
-            classified[2] = 3
+            classified[2] = 1
         elif colorHist[2] > threshold[4]:
             classified[2] = 2
-        elif colorHist[2] > threshold[5]:
-            classified[2] = 1
         return classified
+
 
     def crop_histogram(self, im, mask=False):
         """ given opencv/numpy image, run the processing method
@@ -302,39 +281,46 @@ class Histogram:
         ROI = cv2.bitwise_not(ROI)
         ROI_min_red = cv2.bitwise_and(ROI, im)
 
+
         ROI = ROI_min_red  # self.crop_image_to_box_region(im, False)
         ROI = self.threshold_color(ROI, self.blue_threshold_values)
         kernel = np.ones([2, 2]) / 4
         ROI = cv2.morphologyEx(ROI, cv2.MORPH_OPEN, kernel)
-        ROI = cv2.dilate(ROI, kernel, iterations=2)
+        ROI = cv2.dilate(ROI,kernel,iterations = 2)
         ROI_blue = ROI
         sumBlue = np.sum(ROI)
-        #print("Blue= " + str(sumBlue))
+        print("Blue= " + str(sumBlue))
+
 
         ROI = cv2.bitwise_and(ROI_min_red, cv2.cvtColor(ROI_blue, cv2.COLOR_GRAY2RGB))
         ROI = cv2.bitwise_not(ROI)
         ROI_min_blue = cv2.bitwise_and(ROI, ROI_min_red)
 
-        ROI_min_blue = self.crop_image_to_box_region(ROI_min_blue, mask=True)
 
-        im2 = np.mean(ROI_min_blue, axis=2)
-        im2 = [im2, im2, im2]
-        im2 = np.stack(im2, axis=2)
-        ROI_min_blue[im2 > 230] = 0
-        im2 = np.subtract(ROI_min_blue, im2)
-        im2 = np.abs(im2)
-        im1 = np.mean(im2, axis=2)
-        im2 = [im1,im1,im1]
-        im2 = np.stack(im2, axis=2)
-        ROI_min_blue[im2 > 12] = 0
-        ROI_min_blue_mask = self.threshold_color(ROI_min_blue, self.white_threshold_values)
-        ROI_min_blue = cv2.bitwise_and(ROI_min_blue, cv2.cvtColor(ROI_min_blue_mask, cv2.COLOR_GRAY2RGB))
-        ROI_gray = cv2.cvtColor(ROI_min_blue, cv2.COLOR_RGB2GRAY)
 
-        sumGray = np.sum(ROI_gray)
-        print("Gray= " + str(sumGray))
 
-        colorHist = [sumBlue, sumRed, sumGray]
+        ROI = self.threshold_color(im, self.green_threshold_values)
+        kernel = np.ones([3, 3]) / 9
+        ROI = cv2.morphologyEx(ROI, cv2.MORPH_OPEN, kernel)
+        sumGreen = np.sum(ROI)
+        ROI_green = ROI
+
+
+
+        ROI = cv2.bitwise_and(ROI_min_blue, cv2.cvtColor(ROI_green, cv2.COLOR_GRAY2RGB))
+        ROI = cv2.bitwise_not(ROI)
+        ROI_min_green = cv2.bitwise_and(ROI, ROI_min_blue)
+
+
+
+        ROI = ROI_min_green
+        ROI = self.threshold_color(ROI, self.gray_threshold_values)
+        kernel = np.ones([2, 2]) / 1
+        ROI = cv2.morphologyEx(ROI, cv2.MORPH_OPEN, kernel)
+        sumGray = np.sum(ROI)
+        #print("Gray= " + str(sumRed))
+        colorHist = [sumBlue,sumRed, sumGray]
+        print(colorHist)
         classify = self.threshold_hist(colorHist)
 
         return classify
@@ -361,25 +347,25 @@ if __name__ == '__main__':
             print(f.path[19])
             print(f.path[25])
             print(f.path[29])
-
+            
             print(f.path[23])
             print(f.path[29])
             print(f.path[33])
             '''
 
-            if int(f.path[19]) - classified[2]  == 0:
+            if  int(f.path[29]) == classified[0]:
                 correct = True
                 numCorrect += 1
             else:
                 correct = False
-                numIncorrect += 1
-                # attempt.preview(im)
+                numIncorrect +=1
+                #attempt.preview(im)
 
             if correct:
-                print(str(f.path) + "Label= " + str(classified[2]) + str("= Correct"))
+                print(str(f.path) + "Label= " + str(classified[0]) + str("= Correct"))
             else:
-                print(str(f.path) + "Label= " + str(classified[2]) + str("= Incorrect"))
+                print(str(f.path) + "Label= " + str(classified[0]) + str("= Incorrect"))
 
-    print("Accuracy= " + str(numCorrect / (numCorrect + numIncorrect)))
+    print("Accuracy= " + str(numCorrect/(numCorrect+numIncorrect)))
 
     # attempt.count_number_of_screws(im)
