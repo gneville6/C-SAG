@@ -38,3 +38,13 @@
 0bolts1big0small,87.5,14,2
 2bolts1big1small,0.0,0,27
 0bolts1big1small,0.0,0,40
+3bolts1big0small,0.0,0,19
+0bolts1big0small,87.5,14,2
+3bolts1big0small,0.0,0,19
+0bolts1big0small,87.5,14,2
+2bolts1big1small,0.0,0,27
+0bolts1big1small,0.0,0,40
+3bolts0big1small,0.0,0,20
+3bolts1big0small,0.0,0,19
+0bolts1big0small,87.5,14,2
+2bolts1big1small,0.0,0,27

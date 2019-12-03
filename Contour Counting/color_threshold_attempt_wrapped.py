@@ -53,7 +53,9 @@ class ColorThresholdAttempt:
         self.blue_threshold_values = (np.array([99,50,50]), np.array([115,255,255])) # lower values, upper values
         #self.green_threshold_values = (np.array([0,0,0]), np.array([90,255,255]))  # lower values, upper values
         self.green_threshold_values = (np.array([60,0,0]), np.array([90,255,255]))  # lower values, upper values
-        self.white_threshold_values = (np.array([0,0,230]), np.array([255,255,255]))
+        
+
+        self.white_threshold_values = (np.array([0,0,140]), np.array([179,30,230]))
 
         self.params = cv2.SimpleBlobDetector_Params()
 
@@ -288,7 +290,7 @@ class ColorThresholdAttempt:
         return two images - only screws with color and only screws masked
          """
         ROI = self.crop_image_to_box_region(im)
-        self.preview(ROI)
+        # self.preview(ROI)
         self.count_num_red_screws(ROI)
 
         only_screws_im, masked_only_screws_im = self.threshold_screw_images(ROI)
@@ -300,17 +302,22 @@ class ColorThresholdAttempt:
         red_mask  = self.threshold_red(im)
         num_grey_screws = 0
 
-
         blue_mask = self.threshold_color(im, self.blue_threshold_values)
+        blue_mask[np.argwhere(red_mask == 1)] = 0
 
-        self.preview(blue_mask)
+        grey_mask = self.threshold_color(im, self.white_threshold_values)
+        grey_mask[np.argwhere(red_mask == 1)] = 0
+        grey_mask[np.argwhere(blue_mask == 1)] = 0
+
+        # self.preview(grey_mask)
 
         num_red_screws = self.count_number_of_screws(red_mask, 500)
 
         num_blue_screws = self.count_number_of_screws(blue_mask, 100)
-        # num_grey_screws = self.count_number_of_screws(grey_mask, 100)
+        
+        num_grey_screws = self.count_number_of_screws(grey_mask, 100)
 
-        print(num_blue_screws)
+        # print(num_blue_screws)
         # self.preview(red_im)
 
         return num_red_screws, num_blue_screws, num_grey_screws
@@ -354,14 +361,12 @@ class ColorThresholdAttempt:
     def classify_image_contour(self, im):
         """ Given unprocessed image, classify everything"""
         ROI = self.crop_image_to_box_region(im)
-        self.preview(ROI)
+        # self.preview(ROI)
         num_red_screws = self.count_num_red_screws(ROI)
 
         return num_red_screws
 
         # return only_screws_im, masked_only_screws_im
-
-
 
     def count_number_of_screws(self, masked_only_screws_im, threshold_num):
 
