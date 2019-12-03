@@ -358,9 +358,14 @@ class ColorThresholdAttempt:
         return only_screws_im, masked_only_screws_im
 
     def count_num_red_screws(self, im):
-        red_im  = self.threshold_red(im)
+        red_mask  = self.threshold_red(im)
 
-        self.preview(red_im)
+        num_red_screws = self.count_number_of_screws(red_mask, 500)
+
+        print(num_red_screws)
+        # self.preview(red_im)
+
+        return num_red_screws
 
 
     def process_image_just_crop(self, im, mask=False):
@@ -401,9 +406,26 @@ class ColorThresholdAttempt:
         return ROI
 
 
-    def count_number_of_screws(self, im):
-        """ Given unprocessed image, count the number of screws"""
-        only_screws_im, masked_only_screws_im = self.process_image(im)
+    def classify_image_contour(self, im):
+        """ Given unprocessed image, classify everything"""
+        ROI = self.crop_image_to_box_region(im)
+        self.preview(ROI)
+
+
+        # only_screws_im, masked_only_screws_im = self.threshold_screw_images(ROI)
+        # only_screws_im, masked_only_screws_im = self.process_image(im)
+        num_red_screws = self.count_num_red_screws(ROI)
+
+        
+        # self.preview(masked_only_screws_im)
+
+        return num_red_screws
+
+        # return only_screws_im, masked_only_screws_im
+
+
+
+    def count_number_of_screws(self, masked_only_screws_im, threshold_num):
 
         # self.preview(masked_only_screws_im)
         
@@ -417,7 +439,7 @@ class ColorThresholdAttempt:
         # area = []
         for i in range(len(contours)):
             area_image = cv2.contourArea(contours[i])
-            if area_image >= self.threshold_num:
+            if area_image >= threshold_num:
                 num_contours += 1
             # area.append(area_image)
             
@@ -427,8 +449,8 @@ class ColorThresholdAttempt:
 
         # num_contours = len(contours)
         # print(num_contours)
-        font = cv2.FONT_HERSHEY_SIMPLEX
-        cv2.putText(only_screws_im,'Number of screws:' + str(num_contours),(50,50), font, 1,(255,255,255),2,cv2.LINE_AA)
+        # font = cv2.FONT_HERSHEY_SIMPLEX
+        # cv2.putText(only_screws_im,'Number of screws:' + str(num_contours),(50,50), font, 1,(255,255,255),2,cv2.LINE_AA)
         
         # self.preview(only_screws_im)
 

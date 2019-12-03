@@ -27,3 +27,6 @@
 0bolts1big0small,50.0,8,8
 2bolts1big1small,22.22,6,21
 0bolts1big1small,42.5,17,23
+3bolts1big0small,0.0,0,19
+0bolts1big0small,87.5,14,2
+2bolts1big1small,0.0,0,27

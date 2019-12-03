@@ -50,7 +50,9 @@ def run_all_count_screws():
             im = ColorObj.resize_image(im, 1.00)
 
             # ColorObj.preview(im)
-            num_screws = ColorObj.count_number_of_screws(im)
+            # num_screws = ColorObj.count_number_of_screws(im)
+
+            num_screws = ColorObj.classify_image_contour(im)
 
             if num_screws in count_dict:
                 count_dict[num_screws] = count_dict[num_screws] + 1
