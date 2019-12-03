@@ -47,6 +47,9 @@ def check_opencv_version(major, lib=None):
 class ColorThresholdAttempt:
     def __init__(self):
         self.test = 4
+
+        #HSV
+
         self.blue_threshold_values = (np.array([99,50,50]), np.array([115,255,255])) # lower values, upper values
         #self.green_threshold_values = (np.array([0,0,0]), np.array([90,255,255]))  # lower values, upper values
         self.green_threshold_values = (np.array([60,0,0]), np.array([90,255,255]))  # lower values, upper values
@@ -187,34 +190,6 @@ class ColorThresholdAttempt:
 
         return x_min, x_max, y_min, y_max
 
-    def RANSAC_slope_detection(self, cont_pic, x_vals, y_vals):
-        """ WIP!! compute slopes of boundary detection given image and contour points """
-        # RANSAC to find outline of bucket
-        slope = []
-        for i in range(0,10000):
-            rand = random.randint(0,len(x_vals)-1)
-            x_1 = x_vals[rand]
-            y_1 = y_vals[rand]
-            rand = random.randint(0,len(x_vals)-1)
-            x_2 = x_vals[rand]
-            y_2 = y_vals[rand]
-            if (x_2 - x_1) == 0:
-                s = float('inf')
-                cept = x_2
-            else:
-                s = (y_2 - y_1)/(x_2 - x_1)
-                s = round(s)
-                cept = y_1 - s*x_1
-            slope.append((s,cept))
-
-        c = Counter(slope)
-        most = c.most_common(1)
-        x1 = int(0)
-        y1 = int(most[0][0][0]*x1 + most[0][0][1])
-        x2 = int(cont_pic.shape[1]-1)
-        y2 = int(most[0][0][0]*x2 + most[0][0][1])
-        cv2.line(cont_pic,(x1,y1),(x2,y2),(0,0,255),5)
-
     def crop_image_to_box_region(self, im, mask=True):
         ''' input raw image, return region of image that has the box inside '''
         #step 1 gaussian blur
@@ -307,42 +282,6 @@ class ColorThresholdAttempt:
         #self.preview(proceesed_image)
         return proceesed_image, image_mask
 
-    def threshold_screw_images(self, ROI):
-        """ Given image (assume its region of interest with only box region),
-
-        return image of background blacked out to only contain screws and no color mask version"""
-
-        green_thresh = self.threshold_color(ROI, self.green_threshold_values)
-        # print(green_thresh.shape)
-        #self.preview(green_thresh)
-        green_thresh_inverted = cv2.bitwise_not(green_thresh)
-        # self.preview(green_thresh_inverted)
-        if self.test == 0:
-            green_thresh_open_close = self.open_close_image(green_thresh_inverted, 4)
-        elif self.test == 1:
-            green_thresh_open_close = self.open_close_image(green_thresh_inverted, 1)
-        elif self.test == 2:
-            green_thresh_open_close = self.open_close_image(green_thresh_inverted, 2)
-        elif self.test == 3:
-            green_thresh_open_close = self.open_close_image(green_thresh_inverted, 3)
-        elif self.test == 4:
-            green_thresh_open_close = green_thresh_inverted
-        #green_thresh_inverted = morphOps(green_thresh_inverted, 5)
-        # self.preview(green_thresh_open_close)
-
-        # print(ROI.shape)
-        # print(green_thresh_open_close.shape)
-
-        res2 = cv2.bitwise_and(ROI, ROI, mask=green_thresh_open_close)
-
-        # self.preview(green_thresh_open_close)
-        # self.preview(res2)
-
-        # res, green_thresh_open_close = self.remove_small_blobs(green_thresh_open_close, ROI)
-        # self.preview(res)
-        # return res, green_thresh_open_close
-        return res2, green_thresh_open_close
-
     def process_image(self, im):
         """ given opencv/numpy image, run the processing method 
         
@@ -359,13 +298,22 @@ class ColorThresholdAttempt:
 
     def count_num_red_screws(self, im):
         red_mask  = self.threshold_red(im)
+        num_grey_screws = 0
+
+
+        blue_mask = self.threshold_color(im, self.blue_threshold_values)
+
+        self.preview(blue_mask)
 
         num_red_screws = self.count_number_of_screws(red_mask, 500)
 
-        print(num_red_screws)
+        num_blue_screws = self.count_number_of_screws(blue_mask, 100)
+        # num_grey_screws = self.count_number_of_screws(grey_mask, 100)
+
+        print(num_blue_screws)
         # self.preview(red_im)
 
-        return num_red_screws
+        return num_red_screws, num_blue_screws, num_grey_screws
 
 
     def process_image_just_crop(self, im, mask=False):
@@ -399,9 +347,6 @@ class ColorThresholdAttempt:
          """
         ROI = self.crop_image_to_box_region(im)
         ROI = self.threshold_screw_images(ROI)
-        # self.preview(ROI)
-        #only_screws_im, masked_only_screws_im = self.threshold_screw_images(ROI)
-        # self.preview(only_screws_im)
 
         return ROI
 
@@ -410,14 +355,7 @@ class ColorThresholdAttempt:
         """ Given unprocessed image, classify everything"""
         ROI = self.crop_image_to_box_region(im)
         self.preview(ROI)
-
-
-        # only_screws_im, masked_only_screws_im = self.threshold_screw_images(ROI)
-        # only_screws_im, masked_only_screws_im = self.process_image(im)
         num_red_screws = self.count_num_red_screws(ROI)
-
-        
-        # self.preview(masked_only_screws_im)
 
         return num_red_screws
 
@@ -430,7 +368,6 @@ class ColorThresholdAttempt:
         # self.preview(masked_only_screws_im)
         
         if is_cv4():
-            # im2 = im
             contours, hierarchy = cv2.findContours(masked_only_screws_im, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
         else:
             im2, contours, hierarchy = cv2.findContours(masked_only_screws_im, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
