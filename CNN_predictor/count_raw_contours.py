@@ -21,7 +21,7 @@ def get_total_number_screws(input_string):
     total_num = functools.reduce(lambda a,b: int(a) + int(b), res)
 
     return total_num
-
+    
 def run_all_count_screws():
     ColorObj = ColorThresholdAttempt()
 
@@ -36,7 +36,7 @@ def run_all_count_screws():
         count_dict = {}
         folder_name = j.name
         real_num_screws = get_total_number_screws(folder_name)
-        # print(a)
+        print(folder_name)
 
         count_correct = 0
         count_incorrect = 0
@@ -63,7 +63,14 @@ def run_all_count_screws():
                 count_incorrect += 1
 
         confusion_dict[folder_name] = [count_correct, count_incorrect]
-        print(confusion_dict)
+        accuracy = (count_correct/(count_correct + count_incorrect)) * 100
+        accuracy = str(round(accuracy, 2))
+        print(accuracy)
+
+        file = open("save_data_contour.txt","a+")
+        file.write(folder_name+","+str(accuracy)+","+str(count_correct)+","+str(count_incorrect)+'\n')
+        file.close()
+        # print(confusion_dict)
     return confusion_dict
         # print(count_dict)
 
