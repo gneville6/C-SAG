@@ -129,3 +129,5 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+CNN_predictor/crop_gray_3_class_30ep_300x300.h5
+CNN_predictor/crop_gray_DEEP_300x300.h5
