@@ -298,25 +298,45 @@ class ColorThresholdAttempt:
 
         return only_screws_im, masked_only_screws_im
 
-    def count_num_red_screws(self, im):
+    def classify_image_contour(self, im):
+
+        im = self.crop_image_to_box_region(im)
+        im = cv2.blur(im,(5,5))
+
+        
         red_mask  = self.threshold_red(im)
-        num_grey_screws = 0
+        red_mask = self.open_close_image(red_mask, 3)
+
+
 
         blue_mask = self.threshold_color(im, self.blue_threshold_values)
         blue_mask[np.argwhere(red_mask == 1)] = 0
+        blue_mask = self.open_close_image(blue_mask, 3)
 
         grey_mask = self.threshold_color(im, self.white_threshold_values)
         grey_mask[np.argwhere(red_mask == 1)] = 0
         grey_mask[np.argwhere(blue_mask == 1)] = 0
 
+
+
+        # self.preview(grey_mask)
+        grey_mask = self.open_close_image(grey_mask, 3)
+
+        self.preview(grey_mask)
         # self.preview(grey_mask)
 
-        num_red_screws = self.count_number_of_screws(red_mask, 500)
-
+        num_red_screws = self.count_number_of_screws(red_mask, 450)
         num_blue_screws = self.count_number_of_screws(blue_mask, 100)
-        
         num_grey_screws = self.count_number_of_screws(grey_mask, 100)
 
+        if num_red_screws > 1:
+            num_red_screws = 1
+
+        if num_blue_screws > 2:
+            num_blue_screws = 2
+
+        if num_grey_screws > 3:
+            num_grey_screws = 3
         # print(num_blue_screws)
         # self.preview(red_im)
 
@@ -358,43 +378,18 @@ class ColorThresholdAttempt:
         return ROI
 
 
-    def classify_image_contour(self, im):
-        """ Given unprocessed image, classify everything"""
-        ROI = self.crop_image_to_box_region(im)
-        # self.preview(ROI)
-        num_red_screws = self.count_num_red_screws(ROI)
-
-        return num_red_screws
-
-        # return only_screws_im, masked_only_screws_im
-
     def count_number_of_screws(self, masked_only_screws_im, threshold_num):
-
-        # self.preview(masked_only_screws_im)
-        
+      
         if is_cv4():
             contours, hierarchy = cv2.findContours(masked_only_screws_im, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
         else:
             im2, contours, hierarchy = cv2.findContours(masked_only_screws_im, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
 
         num_contours = 0
-        # area = []
         for i in range(len(contours)):
             area_image = cv2.contourArea(contours[i])
             if area_image >= threshold_num:
                 num_contours += 1
-            # area.append(area_image)
-            
-        # cont = sorted(contours, key = cv2.contourArea, reverse = True)
-        # print(area)
-
-
-        # num_contours = len(contours)
-        # print(num_contours)
-        # font = cv2.FONT_HERSHEY_SIMPLEX
-        # cv2.putText(only_screws_im,'Number of screws:' + str(num_contours),(50,50), font, 1,(255,255,255),2,cv2.LINE_AA)
-        
-        # self.preview(only_screws_im)
 
         return num_contours
 
