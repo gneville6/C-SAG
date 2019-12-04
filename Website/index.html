@@ -255,7 +255,7 @@
 										<h2 class="colorlib-heading">Approach</h2>
 										<p>
 										Several different approaches were used by the supervisory robot to determine what objects were placed in a bin by another robot. These include histogram thresholding, contour counting, probability distributions, and a convolutional neural network. Several methods were also used for motion detection (MHI and gaussian mixture separation model).
-											Finally a dataset of labeled images was created to train our learning algorithms on. This dataset had images of a variety of orientations and scales of various configurations of the bin and parts.
+											We created a dataset of labeled images to train our learning algorithms. This dataset had images of a variety of orientations and scales of various configurations of the bin and parts.
 										</p>
 										<div class="col-md-6 animate-box" data-animate-effect="fadeInRight">
 													<div class="project" style="background-image: url(images/teaser2.png);">
@@ -268,15 +268,15 @@
 													</div>
 										</div>
 										<h4>Data Collection</h4>
-										<p>To aid in the error detection process, data was manually collected in 25 different specific classes. The classes were based on the count of each object in the bin. For example the figure above shows 1 large gear in red, 1 small gear in blue and 2 bolts in grey, therefore the label for this image is “2bolts1big1small.” To collect the data, we recorded video from the Fetch robot’s camera while shaking the green bin to vary the position of the gears and bolts. There was approximately 1 hour of video recorded in total. After converting the video into individual frames, there were approximately 10,000 images in the total dataset with approximately 400 images per class. The advantage of this method is that we can label each image from a specific video with a certain class which minimizes the amount of image labeling required. One note on the classes, the ultimate goal is to determine if the bin has the parts necessary to build a full kit. By initially splitting the data into 25 classes, the option to consolidate into small groups of classes remained such as combining all the images with the large gear to help create a classifier to check for the large gear. </p>
+										<p>To aid in the error detection process, data was manually collected in 25 different specific classes. The classes were based on the count of each object in the bin. For example the figure above shows 1 large gear in red, 1 small gear in blue and 2 bolts in grey, therefore the label for this image is “2bolts1big1small.” To collect the data, we recorded video from the Fetch robot’s camera while shaking the green bin to vary the position of the gears and bolts. There was approximately 1 hour of video recorded in total. After converting the video into individual frames, there were approximately 10,000 images in the total dataset with approximately 400 images per class. The advantage of this method is that we can label each image from a specific video with a certain class which minimizes the amount of image labeling required. One note on the classes: the ultimate goal is to determine if the bin has the parts necessary to build a full kit. By initially splitting the data into 25 classes, the option to consolidate into small groups of classes remained. For example, we were able to combine all the images with the large gear to help create a classifier to check for the large gear. </p>
 
 
 										<h4>Histogram Thresholding</h4>
-										<p>The first and simplest of the approaches we tested for classifying the items in the bin was a thresholding based approach in this approach we would threshold based on the green of the box and locate the contour of the outside of the box using opencv find contour function. After finding the contour we would remove all of the data outside of the region of the box by setting the pixel values to black. After doing this we would threshold away the green of the box and perform a slight erosion and dilation  on the mask to remove any small blobs and to prevent any of the gears/bolts from being removed from the image. Once this was done we would have an image that only contained the gears/bolts. Finally we would threshold themimage containing only the gear/bolts on each of the colors: red, blue and gray and count the numbers of pixels of each color in the image. Using these histograms of colors we would detect the number of gears/bolts by setting ranges on the number of pixels. The exact threshold values were hand tuned to maximize the performance of the classifier on the dataset. This method was tested by measuring its performance on the dataset collected above and qualitatively by running the classifier on webcam images while moving and changing the number of objects in the bin.</p>
+										<p>The first and simplest of the approaches we tested for classifying the items in the bin was a thresholding based approach. In this approach, we would threshold based on the green of the box and locate the contour of the outside of the box using the openCV find contour function. After finding the contour, we would remove all of the data outside of the region of the box by setting the pixel values to black. After doing this we would threshold away the green of the box and perform a slight erosion and dilation  on the mask to remove any small blobs and to prevent any of the gears/bolts from being removed from the image. Once this was done we would have an image that only contained the gears/bolts. Finally, we would threshold the image containing only the desired gears and/or bolts on each of the colors: red, blue and gray and count the numbers of pixels of each color in the image. Using these histograms of colors, we would detect the number of gears and/or bolts by setting ranges on the number of pixels per bin. The exact threshold values were hand tuned to maximize the performance of the classifier on the dataset. This method was tested by measuring its performance on the dataset collected above and qualitatively by running the classifier on webcam images while moving and changing the number of objects in the bin.</p>
 
 
 										<h4>Contour Counting</h4>
-										<p>In this method, images were cropped to the boundary of the box, thresholded on green to cut out the back of the box, dilated and eroded to reduce noise, and finally run through a contour detection on the masked image. Finally, the total number of contours detected larger than a set area was used to predict how many screws/bolts were in the box. </p>
+										<p>In this method, images were cropped to the boundary of the box, thresholded on green to cut out the back of the box, dilated and eroded to reduce noise, and finally run through a contour detection on the masked image. Finally, the total number of contours detected that were larger than a set area was used to predict how many gears and/or bolts were in the box. </p>
 
 
 										<h4>Probability Distributions</h4>
@@ -284,24 +284,23 @@
 
 
 										<h4>Deep Learning</h4>
-										<p>Convolutional Neural Networks were utilized to classify the images into the 25 different classes which ultimately provides the correct count of each object in the bin.  All images were cropped and padded to ensure that the aspect ratio was maintained and the images were the correct size as they were fed into the networks. A few different networks were trained. The first network was trained on the raw images collected. The second network was trained on images cropped to out line of the green bin. The third network trained on images cropped and thresholded on the green background. The fourth used images that were cropped, thresholded and then small blobs that the threshold missed
-										were removed.
+										<p>Convolutional Neural Networks were utilized to classify the images into the 25 different classes with the ultimate goal of getting an accurate count of each gear and bolt in the bin.  All images were cropped and padded to ensure that the aspect ratio was maintained and the images were the correct size as they were fed into the networks. A few different networks were trained; the first network was trained on the raw images collected. The second network was trained on images cropped to  the edges of the green bin. The third network trained on images cropped and thresholded on the green background. The fourth network used images that were cropped, thresholded and then had a blob removal operation applied to clean up anything that the thresholding missed.
 										</p>
 										<h5>Tools</h5>
-										<p>To build, train and test the CNN models, the Keras library with Tensorflow backend was used [Chollet] All training was done on a Windows 10 laptop with 16 GB of RAM and an NVIDIA GeForce 940MX.
+										<p>To build, train and test the CNN models, the Keras library with Tensorflow backend was used [1] All training was done on a Windows 10 laptop with 16 GB of RAM and an NVIDIA GeForce 940MX.
 										</p>
 										<h5>Model Design and Parameters</h5>
-										<p>From a high level, the model was custom built with two convolutional layers with max pooling and one dense fully connected layer and a final soft max layer. The convolutional layers contained 32 3x3 filters. This simple architecture was consistent for all the trained networks. Existing model architectures were tested however they would crash due to the limitation of the hardware used. The model pipeline is available below in figure. XXX.The input image size was (128,128,3) and a batch size of 32 was used. This resulted in a network with approximately 3,000,000 trainable parameters. Most of these decisions were made to limit the overall size of the network to work effectively on the available hardware.
-										A model of the tested network is shown below.
+										<p>From a high level, the model was custom built with two convolutional layers with max pooling and one dense fully connected layer and a final soft max layer. The convolutional layers contained 32 3x3 filters. This simple architecture was consistent for all the trained networks. Existing model architectures were tested however they would crash due to the limitation of the hardware used. The model pipeline is available in the figure below. The input image size was (128,128,3) and a batch size of 32 was used. This resulted in a network with approximately 3,000,000 trainable parameters. Most of the model size decisions were made to limit the overall size of the network to work effectively on the available hardware.
+										
 											<img src="images/model.png" alt="acc graph" width=100% align="center"></p>
 										<h5>Training</h5>
-										<p>The images were broken into two sets the training and validation sets. The validation set was generated by randomly selecting 10% of the data from each class. This was done for each of the levels of preprocessed images. Each of the four neural networks were trained for approximately 30 epochs. The training was stopped short if the training set accuracy reached 100% accuracy which happened for all data sets around 30 epochs. Figure XXXX shows a sample of the training over the course of 15 epochs.</p>
+										<p>The images were broken into two sets the training and validation sets. The validation set was generated by randomly selecting 10% of the data from each class. This was done for each of the levels of preprocessed images. Each of the four neural networks were trained for approximately 30 epochs. The training was stopped short if the training set accuracy reached 100% accuracy which happened for all data sets around 30 epochs. The figure below shows a sample of the training over the course of 15 epochs.</p>
 										<div class="col-md-6 animate-box" data-animate-effect="fadeInLeft">
 											<div class="project" style="background-image: url(images/cnn1.png);">
 												<div class="desc">
 													<div class="con">
 														<h3><a href="#" data-nav-section="home">CNN Accuracy</a></h3>
-														<span>A sample of training run over 15 epochs on the maximally processed image data set where images were cropped, thresholded and blob removal. Shows the accuracy of the training and test.
+														<span>Shows the accuracy of the training and test for a sample training run over 15 epochs on the maximally processed image dataset. 
 														</span>
 													</div>
 												</div>
@@ -312,7 +311,7 @@
 												<div class="desc">
 													<div class="con">
 														<h3><a href="#" data-nav-section="home">CNN Loss</a></h3>
-														<span>A sample of training run over 15 epochs on the maximally processed image data set where images were cropped, thresholded and blob removal. Top shows the calculated loss of the training and test.
+														<span>Shows the calculated loss of the training and test. on a sample training run over 15 epochs on the maximally processed image dataset. 
 														</span>
 													</div>
 												</div>
@@ -497,14 +496,16 @@
 									            <p>
 													The table below shows a summary of the validation set accuracies at the end of training. While it is surprising to see that preprocessed images performing so poorly, we believe this is due to the introduction of the random edges resulting from the thresholding process.
 												</p>
-												<p>Top is the confusion matrix when run against the validation set for the cropped images. It can be seen clearly that it misses a couple classes severely and tends to favor class 21. Bottom is the confusion matrix for the raw images. It shows a nice diagonal correctly classifying most of the matrix.
+<img src="images/cnn3.png" alt="Bolt confusion matrix" width="500"  align="middle">
+												<p>
+The top confusion matrix shows the results when running inference on the validation set for the cropped images. It can be seen clearly that it misses a few classes entirely and tends to favor certain classes. The bottom figure is the confusion matrix for the raw images. It shows a nice diagonal correctly classifying most of the raw images in the validation set.
 </p>
-												<img src="images/cnn3.png" alt="Bolt confusion matrix" width="500"  align="middle">
+												
 												<img src="images/cnn4.png" alt="Bolt confusion matrix" width="500"  align="middle">
 												<img src="images/cnn5.png" alt="Bolt confusion matrix" width="500"  align="middle">
 
 												<h4>Live Inference test</h4>
-									            <p>We ran live inference using the model built on the cropped image set using an external web-cam. The inference failed miserably. The classifications did not seem to match the classes at all based on the brief video inference. We were running the inference on each frame independently as it was received into the camera feed. The figures below shows two instances where of these failures.</p>
+									            <p>We ran live inference using the model built on the cropped image set using an external webcam. The inference failed miserably. The classifications did not seem to match the classes at all, based on the brief video inference. We were running the inference on each frame independently as it was received into the camera feed. The figures below shows two instances of these failures.</p>
 									        	<img src="images/cnn6.png" alt="Bolt confusion matrix" width="500"  align="middle">
 												<img src="images/cnn7.png" alt="Bolt confusion matrix" width="500"  align="middle">
 
@@ -524,7 +525,7 @@
 									        <div class="panel-body">
 									        <h4>Motion Detection</h4>
 									            <p>
-													In order to test the results we ran several empirical tests using webcam video stream. The first method tested was the MHI approach. This method performed poorly due to a high amount of noise in the image pixels between frames. Due to the noise this method proved inviable. The second method we looked at was an MOG2 motion detection algorithm that used gaussian mixtures. This method performed very well and was able to very accurately locate all motion in the image. Using this model we were able to create an error checking script where the camera watches the robot and detects motion. If motion has not been detected for a set amount of time  the algorithm will say that the robot is in an error state. Below are several pictures that give an understanding of how these algorithms performed.
+													In order to test the results, we ran several empirical tests using webcam video stream. The first method tested was the MHI approach. This method performed poorly due to a high amount of noise in the image pixels between frames. Due to the noise this method proved inviable. The second method we looked at was an MOG2 motion detection algorithm that used gaussian mixtures. This method performed very well and was able to very accurately locate all motion in the image. Using this model we were able to create an error checking script where the camera watches the robot and detects motion. If motion has not been detected for a set amount of time  the algorithm will say that the robot is in an error state. Below are several pictures that give an understanding of how these algorithms performed.
 												</p>
 												<img src="images/motion1.png" alt="acc graph" width="500"  align="middle">
 												<img src="images/motion2.png" alt="Big gear confusion matrix" width="500"  align="middle">
@@ -627,29 +628,8 @@
 							</div>
 						</div>
 					</div>
-					<h4>Deep Learning</h4>
-					<div class="row">
-						<div class="col-md-6 animate-box" data-animate-effect="fadeInLeft">
-							<div class="project" style="background-image: url(images/two_fetch.jpg);">
-								<div class="desc">
-									<div class="con">
-										<h3><a href="#" data-nav-section="home">CNN</a></h3>
-										<span>Comment 1</span>
-									</div>
-								</div>
-							</div>
-						</div>
-						<div class="col-md-6 animate-box" data-animate-effect="fadeInRight">
-							<div class="project" style="background-image: url(images/comp_vis.jpg);">
-								<div class="desc">
-									<div class="con">
-										<h3><a href="#" data-nav-section="home">CNN</a></h3>
-										<span>Comment 2</span>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
+					
+						
 					<h4>Motion Detection</h4>
 					<div class="row">
 						<div class="col-md-6 animate-box" data-animate-effect="fadeInLeft">
@@ -702,6 +682,7 @@
 										  <source src="movie.ogg" type="video/ogg">
 										Your browser does not support the video tag.
 										</video>
+										<p> The video above shows the poor outcomes of our CNN classifier when running live inference. </p>
 									</div>
 								</div>
 							</div>
@@ -720,15 +701,17 @@
 									<div class="about-desc">
 										<span class="heading-meta">What did we learn?</span>
 										<h2 class="colorlib-heading">Conclusion</h2>
-										<p>
+<p>
+											The results from several of the methods we tried classified the parts poorly (multi-class CNN and contour counting in particular).Two of the methods that we tried (probabilistic methods and thresholding) did seem to give pretty good results on counting the parts in the bin. They both effectively classified the large red gear and two small blue gears on both the validation set and during live inference. While the grey bolts were challenging to count, the probablistic and histogram color thresholding showed the most promise. The downside to these methods is that they rely heavily on the colors within this specific domain. In the future, we would ideally have a method that is agnositc to color. We believe that more general methods like CNNs did not perform as well as expected to the size and quality of our data set. The images were too similar and far too few to effectively learn how to count the parts in the bin. 
+										
+										<!--<p>
 											Due to the fact that results from the experiment are still pending, concluding statements can not be made about the validity of the work. However, if this method is effective, there are several interesting avenues available for future work. If we are able to consistently visually detect errors, we may be able to use this information to modify the robot’s list of possible actions to remove actions that have a higher chance of causing errors. Once modified this new action space could be useful in helping develop a dynamic planning algorithm. Also, if agents are capable of recognizing the errors of other robots in a cluster this information could be used to develop algorithms for decentralized cluster behaviors. Finally work like this could be used to develop error recovery strategies that can allow for autonomous correction of errors that have already occurred.
 
+										</p> -->
+
+										The CNN classifier network seemed to fail pretty dramatically due to over-fitting. It was able to accurately classify the validation and training sets very nicely, but failed the live inference. It was likely classifying based on extraneous features that are not obvious to us that happened to be consistent across the images whether it be something in the background or the angle of the green bin.
 										</p>
-										<h4>Conclusion Deep Nets</h4>
-										<p>The CNN classifier network seemed to fail pretty dramatically due to over-fitting. It was able to accurately classify the validation and Test sets very nicely, but failed the live inference. It was likely classifying based on extraneous features that are not obvious to us that happened to be consistent across the images whether it be something in the background or the angle of the green bin.
-										</p>
-										<p>There are a number of things we would like to have improved about the deep learning approach and would continue on this path if more time were available. Firstly, there are adjustments that can be made to the model such as adding additional convolutional layers or using transfer learning by capturing the pre-trained feature filters from existing datasets and then training the fully connected layers. We were limited by the available hardware, but moving forward we would seek to utilize better hardware that can handle larger memory capacity. These improvements are contingent on increasing the size of the dataset. While we did have approximately 10,000 images, they were not unique images and did not provide enough variety for the model to learn the distinguishing and important features. Lastly, we believe that an entirely different approach using an object detection as opposed to classification would yield better results. Overall, we learned that utilizing deep learning requires a good deal of parameter tuning as well as trial and error to be successful.
-										</p>
+										
 									</div>
 								</div>
 							</div>
@@ -747,11 +730,11 @@
 									<div class="about-desc">
 										<span class="heading-meta">Whats Next?</span>
 										<h2 class="colorlib-heading">Future Work</h2>
+										
 										<p>
-											The results from several of the methods we tried for classify the parts performed poorly (multi-class CNN, binary CNN, and contour counting). We believe that these methods did not perform as well as expected to the size and quality of our data set. The images were too similar and far too few to effectively learn how to count the parts in the bin. Two of the methods that we tried (probabilistic methods and thresholding) did seem to give pretty good results on counting the parts in the bin.
+											Several further improvements could be made to increase the performance of our classifiers. Improving the dataset to remove blurry or images with occlusion and expand the number of images for each class. We believe these improvements would improve the performance of the CNN as well as allow us to further tune the classical methods described above.
 										</p>
-										<p>
-											Several further improvements could be made to increase the performance of our classifiers. Improving the dataset to remove blurry or images with occlusion and expand the number of images for each class. These improvements to class we believe would improve the performance of the CNN as well as allow us to further tune the classical methods described above.
+<p>There are a number of things we would like to have improved about the deep learning approach and would continue on this path if more time were available. Firstly, there are adjustments that can be made to the model such as adding additional convolutional layers or using transfer learning by capturing the pre-trained feature filters from existing datasets and then training the fully connected layers. We were limited by the available hardware, but moving forward we would seek to utilize better hardware that can handle larger memory capacity. These improvements are contingent on increasing the size of the dataset. While we did have approximately 10,000 images, they were not unique images and did not provide enough variety for the model to learn the distinguishing and important features. Lastly, we believe that an entirely different approach using object detection as opposed to classification would yield better results. Overall, we learned that utilizing deep learning requires a good deal of parameter tuning as well as trial and error to be successful.
 										</p>
 										<p>
 											Also in future work we hope to implement these systems on teams of robots. Using these methods we could find which actions cause errors most often and modify the action space. Once modified this new action space could be useful in helping develop a dynamic planning algorithm. Also, if agents are capable of recognizing the errors of other robots in a cluster this information could be used to develop algorithms for decentralized cluster behaviors. Finally work like this could be used to develop error recovery strategies that can allow for autonomous correction of errors that have already occurred.
