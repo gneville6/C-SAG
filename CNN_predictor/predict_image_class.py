@@ -77,7 +77,7 @@ class Predictor():
         """
         
         if raw_image==False:
-            im = PIL.Image.open(image_file)
+            im = cv2.imread(image_file)
         else:
             im = image_file
             
@@ -85,7 +85,7 @@ class Predictor():
         
         classifier = self.classifier
         out = classifier.predict(im)
-        print("out", out)
+#        print("out", out)
         
         max_per = np.max(out)
         bin_out = np.where(out == max_per, 1, 0)
